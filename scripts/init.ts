@@ -32,7 +32,7 @@ newTitle ??= newId
   .map((w) => (w === 'pf2e' ? 'PF2e' : w.charAt(0).toUpperCase() + w.slice(1)))
   .join(' ');
 
-const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'packs']);
+const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'packs', '.claude']);
 const TEXT_EXT = new Set(['.ts', '.mts', '.js', '.mjs', '.json', '.md', '.css', '.svelte', '.yml', '.yaml', '.html', '.hbs']);
 const EXTRA_FILES = new Set(['LICENSE']);
 

@@ -71,6 +71,28 @@ After `npm run build`, enable the module in a world and reload — the symlink
 serves `dist/` live. Foundry hot-reloads `.hbs`/`.css`/`.json` but not esmodules,
 so reload the browser after a `.js`/`.svelte` rebuild.
 
+## AI tooling
+
+This repo ships a project skill at `.claude/skills/foundry-pf2e/` — the Foundry/PF2e
+authoring rules and reference (API, packs, Svelte-in-ApplicationV2, the Vite build,
+multi-client sync). Claude Code loads it automatically when you work here, and `npm run
+init` carries it into new modules.
+
+For Svelte, the skill keeps only the Foundry integration and defers the language to
+Svelte's own AI tooling (`@sveltejs/mcp`). Two ways to use it:
+
+- **No setup (on demand):** validate a component after editing it —
+  `npx -y @sveltejs/mcp svelte-autofixer src/ui/Foo.svelte` — or fetch language docs
+  with `npx -y @sveltejs/mcp get-documentation <sections>`.
+- **As an MCP server (optional, persistent):** register it once so the tools are in
+  every session.
+
+  ```bash
+  claude mcp add -s user svelte -- npx -y @sveltejs/mcp     # all your projects
+  # or commit it for collaborators (writes .mcp.json to this repo):
+  claude mcp add -s project svelte -- npx -y @sveltejs/mcp
+  ```
+
 ## UI: Svelte 5 in ApplicationV2
 
 The window is a thin `ApplicationV2` subclass; Svelte does the rendering. In
