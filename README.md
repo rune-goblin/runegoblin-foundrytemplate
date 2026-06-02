@@ -11,21 +11,44 @@ mounted in an **ApplicationV2** shell.
 <!-- TEMPLATE:START -->
 ## Use this template
 
-Clone it, then rename everything to your new module id in one shot:
+This repo is a GitHub **template repository**. Create a new module from it, then run
+`npm run init` to rename it to your module id.
+
+**GitHub CLI (recommended)** — creates the repo, clones it, and gives it its own
+history and remote in one step:
 
 ```bash
+gh repo create rune-goblin/pf2e-my-module \
+  --template rune-goblin/runegoblin-foundrytemplate \
+  --private --clone
+cd pf2e-my-module
 npm run init -- pf2e-my-module --title "PF2e My Module"
-# --title is optional; it's derived from the id when omitted
+npm install && npm run build
 ```
 
-`init` rewrites the id/title across `module.json`, `package.json`, `src/`, `lang/`,
-`scripts/`, the release workflow, and this README, then deletes itself. Afterward:
+**GitHub UI** — click **Use this template → Create a new repository**, then:
 
 ```bash
-rm -rf .git && git init -b main   # fresh history
-npm install
-npm run build
+git clone git@github.com:rune-goblin/pf2e-my-module.git
+cd pf2e-my-module
+npm run init -- pf2e-my-module --title "PF2e My Module"
+npm install && npm run build
 ```
+
+**Plain clone** — no new GitHub repo yet; start fresh history yourself:
+
+```bash
+git clone git@github.com:rune-goblin/runegoblin-foundrytemplate.git pf2e-my-module
+cd pf2e-my-module
+npm run init -- pf2e-my-module --title "PF2e My Module"
+rm -rf .git && git init -b main
+npm install && npm run build
+```
+
+`npm run init -- <id> [--title "..."]` rewrites the id/title across `module.json`,
+`package.json`, `src/`, `lang/`, `scripts/`, the release workflow, and this README,
+then deletes itself. It leaves `.claude/` (the bundled skill) untouched, and derives
+`--title` from the id when omitted.
 
 <!-- TEMPLATE:END -->
 ## Layout
