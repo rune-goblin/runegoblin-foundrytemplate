@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.vite-cache/
+.DS_Store
+*.zip
+*.log
+
+# LevelDB volatile files (packs/_source JSON stays tracked)
+packs/**/LOCK
+packs/**/LOG
+packs/**/LOG.old
+packs/**/*.log
+
+# Local reference symlinks (sandbox only, created by npm run link-dev)
+_pf2e-source
+_foundry-data
+_foundry-data-v14
+__foundryModules
+__foundryModules-v14
