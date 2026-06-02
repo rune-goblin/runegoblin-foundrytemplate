@@ -13,7 +13,7 @@ const dataV14 = join(home, 'Library/Application Support/FoundryVTT-v14/Data');
 const data = join(home, 'Library/Application Support/FoundryVTT/Data');
 
 // name-in-repo -> target it points at
-const refs = {
+const refs: Record<string, string> = {
   '_pf2e-source': join(home, 'Documents/repos/pf2e'),
   '_foundry-data-v14': dataV14,
   '_foundry-data': data,
@@ -21,7 +21,7 @@ const refs = {
   '__foundryModules': join(data, 'modules'),
 };
 
-function link(linkPath, target) {
+function link(linkPath: string, target: string): void {
   if (!existsSync(target)) {
     console.log(`skip (missing target): ${linkPath} -> ${target}`);
     return;

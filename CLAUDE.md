@@ -116,3 +116,4 @@ Replicate this when state must stay consistent across clients. The runegoblin
 - Persist state in document flags, not the raw socket; raw socket for transient signals only.
 - Vite does **not** type-check — run `npm run check` (`svelte-check` + `tsc`). The release workflow runs it before building.
 - Foundry hot-reloads `.hbs`/`.css`/`.json`, not esmodules — reload the browser after a `.js`/`.svelte` rebuild.
+- TypeScript everywhere, including tooling: `vite.config.ts`, `svelte.config.ts`, and `scripts/*.ts` run directly via `node` (≥22.6 strips types natively — no `tsx`/`ts-node`). `package.json` pins `engines.node`. Don't reintroduce `.mjs`/`.js` tooling.

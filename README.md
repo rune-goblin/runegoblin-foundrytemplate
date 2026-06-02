@@ -42,7 +42,7 @@ dist/                build output (gitignored) — what module.json loads
 lang/en.json         localization
 packs/               LevelDB compendium packs (built)
   _source/           human-readable JSON pack sources (tracked; packed with fvtt)
-scripts/link-dev.mjs sandbox symlink setup
+scripts/link-dev.ts  sandbox symlink setup (run via node's TS type-stripping)
 ```
 
 ## Develop
