@@ -61,7 +61,7 @@ Load these as needed; don't read all of them up front.
 
 ## Essentials worth knowing without opening a file
 
-**Module identity.** The module id (e.g. `pf2e-netherworld`) is the key for flags,
+**Module identity.** The module id (e.g. `pf2e-my-module`) is the key for flags,
 settings, the socket channel (`module.<id>`), and pack names (`<id>.<pack>`). Use a
 `const MODULE_ID = '<id>'` and reference it everywhere.
 
