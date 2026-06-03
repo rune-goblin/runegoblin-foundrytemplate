@@ -41,7 +41,7 @@ Code style: global `~/.claude/CLAUDE.md` — comment only the non-obvious *why*.
   and pack names (`<id>.<pack>`) all key off it. Use `const MODULE_ID`.
 - Public API: `game.modules.get(MODULE_ID).api = {...}` (cast — `api` isn't typed on `Module`).
 - Strings: `lang/en.json` under `pf2e-module-template.*`; `game.i18n.localize/format`. No hard-coded strings.
-- compatibility `minimum "13"`, `verified "14"`; author `Mark Pearce`, org `rune-goblin`, proprietary license.
+- compatibility `minimum "14"`, `verified "14"`; author `Mark Pearce`, org `rune-goblin`, proprietary license.
 - Release: tag `vX.Y.Z` → `release.yml` stamps the version, type-checks, builds, publishes `module.json` + `pf2e-module-template.zip`.
 
 ## Gotchas

@@ -1,11 +1,38 @@
 # PF2e Module Template
 
-Pathfinder 2e Foundry VTT module template. Hybrid: compendium content (`packs/`)
-plus a scripted esmodule (`src/`) — a **Svelte 5** UI in an **ApplicationV2** shell.
+A starting point for **Pathfinder 2e Foundry VTT** modules. Ship compendium content
+(`packs/`) and a scripted esmodule (`src/`) — a **Svelte 5** UI in an **ApplicationV2**
+shell — from one repo.
 
 - System: `pf2e`
-- Foundry: v13 minimum, verified on v14
+- Foundry: v14 minimum, verified on v14
 - Build: TypeScript + Svelte 5 + Vite
+
+## What you get
+
+- **A v14-only stack.** TypeScript runs source and tooling alike: `vite.config.ts`,
+  `svelte.config.ts`, and `scripts/*.ts` execute straight through Node ≥ 22.12, with no
+  `tsx` or `ts-node`. No v1 Foundry APIs — ApplicationV2, DialogV2, and DataModel only.
+- **Svelte 5 in ApplicationV2, wired up.** A working window (`src/ui/ExampleApp.ts`)
+  `mount()`s a runes component and `unmount()`s it on close. The lifecycle plumbing is
+  done. Open it from the console: `game.modules.get('pf2e-module-template').api.open()`.
+- **A Vite library build.** `src/index.ts` compiles to `dist/<id>.{js,css}`, the artifacts
+  `module.json` loads. `npm run dev` watches; `npm run check` runs `svelte-check` and `tsc`.
+- **Compendium packs.** `packs/_source/` JSON, tracked in git and packed to LevelDB with
+  the `fvtt` CLI. The hybrid content workflow is set up.
+- **One-command rename.** `npm run init -- <new-id> [--title "..."]` rewrites the id and
+  title across the manifest, sources, flags, socket channel, and pack names, then deletes
+  itself. Your module is wired in seconds.
+- **Dev setup that finds Foundry.** `npm run setup` detects your Foundry data dir from
+  `options.json`, symlinks the module in, and pulls reference sources. It prompts only when
+  it cannot resolve a path itself.
+- **Release on tag.** Push `vX.Y.Z`; `release.yml` stamps the version, type-checks, builds,
+  and publishes a GitHub release with `module.json` and the module zip.
+- **AI authoring built in.** A bundled `foundry-pf2e` Claude Code skill (`.claude/skills/`)
+  carries the Foundry/PF2e API, packs, Svelte-in-ApplicationV2, build, and sync rules into
+  every module you make from this template.
+- **Sensible defaults.** Localization (`lang/en.json`), a public `api` surface, the
+  `module.<id>` socket channel, and license and author metadata all key off the module id.
 
 <!-- TEMPLATE:START -->
 ## Use this template
