@@ -71,8 +71,8 @@ npm install && npm run build
 ```
 
 `npm run init -- <id> [--title "..."]` rewrites the id and title across the repo, then
-deletes itself. It leaves `.claude/` (the bundled skill) alone and derives the title
-from the id when omitted.
+removes itself and the template's `CHANGELOG.md` (your module starts its own history). It
+leaves `.claude/` (the bundled skill) alone and derives the title from the id when omitted.
 
 <!-- TEMPLATE:END -->
 ## Layout
