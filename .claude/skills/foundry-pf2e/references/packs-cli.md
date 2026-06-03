@@ -9,12 +9,15 @@ Packs are LevelDB databases under `packs/`. Edit them as JSON sources in
 
 ## Pack / unpack
 
+The CLI ships as a dev dependency, wrapped as `npm run pack` / `npm run unpack` (or call
+`npx fvtt` directly).
+
 ```bash
 # JSON sources -> LevelDB pack
-fvtt package pack <name>   --in packs/_source/<name> --out packs
+npm run pack   -- <name> --in packs/_source/<name> --out packs
 
 # LevelDB pack -> JSON sources (after editing content inside Foundry)
-fvtt package unpack <name> --in packs --out packs/_source/<name>
+npm run unpack -- <name> --in packs --out packs/_source/<name>
 ```
 
 Pass explicit `--in/--out` so the CLI's configured `dataPath` doesn't matter (it may

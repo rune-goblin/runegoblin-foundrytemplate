@@ -19,7 +19,7 @@ shell — from one repo.
 - **A Vite library build.** `src/index.ts` compiles to `dist/<id>.{js,css}`, the artifacts
   `module.json` loads. `npm run dev` watches; `npm run check` runs `svelte-check` and `tsc`.
 - **Compendium packs.** `packs/_source/` JSON, tracked in git and packed to LevelDB with
-  the `fvtt` CLI. The hybrid content workflow is set up.
+  the bundled `fvtt` CLI (`npm run pack`). The hybrid content workflow is set up.
 - **One-command rename.** `npm run init -- <new-id> [--title "..."]` rewrites the id and
   title across the manifest, sources, flags, socket channel, and pack names, then deletes
   itself. Your module is wired in seconds.
@@ -94,8 +94,9 @@ scripts/setup.ts     dev symlink setup
 
 ## Develop
 
-Set up once — needs Node ≥ 22.12, a local Foundry install, and (for packs) the
-[`fvtt`](https://github.com/foundryvtt/foundryvtt-cli) CLI:
+Set up once — needs Node ≥ 22.12 and a local Foundry install. The
+[`fvtt`](https://github.com/foundryvtt/foundryvtt-cli) CLI (for packs) ships as a dev
+dependency, so `npm install` brings it:
 
 ```bash
 npm install
@@ -158,11 +159,12 @@ The window is a thin `ApplicationV2` subclass; Svelte renders. `_renderHTML` cal
 
 ## Compendium packs (fvtt CLI)
 
-Close Foundry first — LevelDB locks while it runs.
+The `fvtt` CLI is a dev dependency, wrapped as `npm run pack` / `npm run unpack`. Close
+Foundry first — LevelDB locks while it runs.
 
 ```bash
-fvtt package pack <pack-name>   --in packs/_source/<pack-name> --out packs
-fvtt package unpack <pack-name> --in packs --out packs/_source/<pack-name>
+npm run pack   -- <pack-name> --in packs/_source/<pack-name> --out packs
+npm run unpack -- <pack-name> --in packs --out packs/_source/<pack-name>
 ```
 
 Add the pack to `module.json` `"packs"`; Actor/Item packs also need `"system": "pf2e"`.
