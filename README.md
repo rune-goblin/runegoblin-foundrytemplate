@@ -173,3 +173,15 @@ Add the pack to `module.json` `"packs"`; Actor/Item packs also need `"system": "
 
 Push a tag `vX.Y.Z`; `release.yml` stamps the version, type-checks, builds, and
 publishes a GitHub release with `module.json` + `pf2e-module-template.zip`.
+
+## License
+
+This template's own code is [MIT](LICENSE) — use, modify, and build on it freely.
+
+The MIT license covers **only the template**. It does not grant any rights to Paizo
+intellectual property. Pathfinder rules text, names, and other Paizo content require
+their own license — see <https://paizo.com/licenses>.
+
+If you include any code from the PF2e system, that code is distributed under Apache 2.0;
+comply with its terms — see
+<https://github.com/foundryvtt/pf2e/blob/v14-dev/LICENSE>.

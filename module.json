@@ -3,7 +3,7 @@
   "title": "PF2e Module Template",
   "description": "A Pathfinder 2e Foundry VTT module template: compendium content plus a scripted esmodule with a Svelte 5 UI mounted in ApplicationV2.",
   "version": "0.1.0",
-  "license": "LICENSE",
+  "license": "MIT",
   "authors": [
     {
       "name": "Mark Pearce",
