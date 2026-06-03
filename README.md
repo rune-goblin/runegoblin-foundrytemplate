@@ -129,13 +129,11 @@ prompting only when it can't detect them:
 Resolved paths cache to `.dev-paths.json` (gitignored). Flags: `--reconfigure` (re-ask),
 `--no-link` (paths only), `--yes` (non-interactive). The gitignored links it creates:
 
-| In-repo link            | Points at                     |
-|-------------------------|-------------------------------|
-| `_pf2e-source`          | your `pf2e` checkout          |
-| `_foundry-data-v14`     | `FoundryVTT-v14/Data`         |
-| `_foundry-data`         | `FoundryVTT/Data`             |
-| `__foundryModules-v14`  | `FoundryVTT-v14/Data/modules` |
-| `__foundryModules`      | `FoundryVTT/Data/modules`     |
+| In-repo link       | Points at                  |
+|--------------------|----------------------------|
+| `_pf2e-source`     | your `pf2e` checkout       |
+| `_foundry-data`    | `<FoundryData>/Data`       |
+| `_foundry-modules` | `<FoundryData>/Data/modules` |
 
 ## AI tooling
 

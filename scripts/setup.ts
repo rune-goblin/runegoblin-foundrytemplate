@@ -1,5 +1,5 @@
 // Dev environment setup. Idempotent. Run with `npm run setup`.
-//   1. Find the Foundry data dir(s) — detect per-platform, else ask for the path.
+//   1. Find the Foundry data dir — detect per-platform, else ask for the path.
 //   2. Resolve the PF2e system source — detect, clone foundryvtt/pf2e, point at a
 //      checkout, or skip (types also ship via the foundry-pf2e dep, so it's optional).
 //   3. Symlink references INTO the repo and this repo OUT into Foundry's modules/.
@@ -27,7 +27,7 @@ const noLink = argv.has('--no-link');
 const interactive = Boolean(stdin.isTTY) && !argv.has('--yes');
 
 interface DevPaths {
-  foundryData?: string[];
+  foundryData?: string;
   pf2eSource?: string;
 }
 
@@ -74,13 +74,14 @@ function readConfig(): DevPaths {
 }
 
 // Foundry's default user-data folders per platform. Recent desktop builds version the
-// folder (FoundryVTT-v14); older/server installs use a plain FoundryVTT. We scan all.
+// folder (FoundryVTT-v14); older/server installs use a plain FoundryVTT. v14-only — we
+// check the v14 folder first, then the plain one, and use the first that resolves.
 function userDataDirs(): string[] {
   let base: string;
   if (process.platform === 'darwin') base = join(home, 'Library/Application Support');
   else if (process.platform === 'win32') base = process.env.LOCALAPPDATA ?? join(home, 'AppData/Local');
   else base = process.env.XDG_DATA_HOME ?? join(home, '.local/share');
-  return ['FoundryVTT-v14', 'FoundryVTT-v13', 'FoundryVTT'].map((n) => join(base, n));
+  return ['FoundryVTT-v14', 'FoundryVTT'].map((n) => join(base, n));
 }
 
 // The configured data dir lives in Config/options.json's `dataPath` (which may point
@@ -99,33 +100,31 @@ function dataDirFor(userData: string): string | null {
   return existsSync(conventional) ? conventional : null;
 }
 
-function detectFoundryData(): string[] {
-  if (process.env.FOUNDRY_DATA) return [process.env.FOUNDRY_DATA];
-  const out: string[] = [];
+function detectFoundryData(): string | null {
+  if (process.env.FOUNDRY_DATA) return process.env.FOUNDRY_DATA;
   for (const ud of userDataDirs()) {
     const dd = dataDirFor(ud);
-    if (dd && existsSync(dd) && !out.includes(dd)) out.push(dd);
+    if (dd && existsSync(dd)) return dd;
   }
-  return out;
+  return null;
 }
 
-async function resolveFoundryData(cfg: DevPaths): Promise<string[]> {
-  let found = (cfg.foundryData ?? []).filter(existsSync);
-  if (found.length === 0) found = detectFoundryData();
-  if (found.length > 0) {
-    for (const d of found) console.log(`✓ Foundry data: ${d}`);
+async function resolveFoundryData(cfg: DevPaths): Promise<string | undefined> {
+  const found = (cfg.foundryData && existsSync(cfg.foundryData) ? cfg.foundryData : detectFoundryData()) || undefined;
+  if (found) {
+    console.log(`✓ Foundry data: ${found}`);
     return found;
   }
   console.log('• No Foundry data dir found (no Config/options.json at the default locations).');
   if (!interactive) {
     console.log('  Set FOUNDRY_DATA or run interactively to point at it; skipping Foundry links.');
-    return [];
+    return undefined;
   }
   // Foundry picks/creates its own data dir — we only link into an existing one, never make it.
   const entered = expand(await ask('  Path to your Foundry Data dir (the folder holding modules/, worlds/):'));
-  if (entered && existsSync(entered)) return [entered];
+  if (entered && existsSync(entered)) return entered;
   if (entered) console.log(`  ${entered} doesn't exist — skipping Foundry links.`);
-  return [];
+  return undefined;
 }
 
 function pf2eCandidates(cfg: DevPaths): string[] {
@@ -190,21 +189,13 @@ function link(linkPath: string, target: string): void {
   console.log(`linked ${basename(linkPath)} → ${target}`);
 }
 
-const used = new Set<string>();
-function nameOnce(base: string): string {
-  let name = base;
-  for (let i = 2; used.has(name); i++) name = `${base}-${i}`;
-  used.add(name);
-  return name;
-}
-
 const cfg = readConfig();
 console.log('Setting up the dev environment…\n');
 
 const foundryData = await resolveFoundryData(cfg);
 const pf2eSource = await resolvePf2eSource(cfg);
 
-if (foundryData.length || pf2eSource) {
+if (foundryData || pf2eSource) {
   writeFileSync(CONFIG, `${JSON.stringify({ foundryData, pf2eSource }, null, 2)}\n`);
   console.log(`\nSaved paths to ${basename(CONFIG)} (gitignored) — re-run with --reconfigure to change.`);
 }
@@ -217,19 +208,13 @@ if (noLink) {
   rl?.close();
 } else {
   console.log('');
-  if (pf2eSource) link(join(repo, nameOnce('_pf2e-source')), pf2eSource);
-  for (const dataDir of foundryData) {
-    const sfx = /v14/i.test(dataDir) ? '-v14' : '';
-    link(join(repo, nameOnce(`_foundry-data${sfx}`)), dataDir);
-    link(join(repo, nameOnce(`__foundryModules${sfx}`)), join(dataDir, 'modules'));
-  }
-  for (const dataDir of foundryData) {
-    const modulesDir = join(dataDir, 'modules');
-    if (!existsSync(modulesDir)) {
-      console.log(`skip (no modules dir): ${modulesDir}`);
-      continue;
-    }
-    link(join(modulesDir, ID), repo);
+  if (pf2eSource) link(join(repo, '_pf2e-source'), pf2eSource);
+  if (foundryData) {
+    link(join(repo, '_foundry-data'), foundryData);
+    link(join(repo, '_foundry-modules'), join(foundryData, 'modules'));
+    const modulesDir = join(foundryData, 'modules');
+    if (existsSync(modulesDir)) link(join(modulesDir, ID), repo);
+    else console.log(`skip (no modules dir): ${modulesDir}`);
   }
   rl?.close();
 }

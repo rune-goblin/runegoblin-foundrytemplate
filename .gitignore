@@ -15,6 +15,4 @@ packs/**/*.log
 .dev-paths.json
 _pf2e-source
 _foundry-data
-_foundry-data-v14
-__foundryModules
-__foundryModules-v14
+_foundry-modules
