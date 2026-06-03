@@ -13,7 +13,7 @@
     "dev": "vite build --watch",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc --noEmit",
     "clean": "rm -rf dist",
-    "link-dev": "node scripts/link-dev.ts"
+    "setup": "node scripts/setup.ts"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^4.0.4",

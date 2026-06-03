@@ -30,8 +30,8 @@ Code style: global `~/.claude/CLAUDE.md` — comment only the non-obvious *why*.
 ## Build & dev
 
 - `npm run build` → `dist/` (gitignored; build before enabling a world, and after edits).
-- `npm run dev` — watch. `npm run check` — `svelte-check` + `tsc`. `npm run link-dev` —
-  symlink into Foundry + pull reference sources in.
+- `npm run dev` — watch. `npm run check` — `svelte-check` + `tsc`. `npm run setup` —
+  resolve dev paths (detect/clone/prompt), then symlink into Foundry + pull references in.
 - Active install: `FoundryVTT-v14`. References: `_pf2e-source`, `_foundry-data(-v14)`,
   `__foundryModules(-v14)`.
 

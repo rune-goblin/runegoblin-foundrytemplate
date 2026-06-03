@@ -11,7 +11,8 @@ packs/**/LOG
 packs/**/LOG.old
 packs/**/*.log
 
-# Local reference symlinks (sandbox only, created by npm run link-dev)
+# Local dev paths + reference symlinks (sandbox only, created by npm run setup)
+.dev-paths.json
 _pf2e-source
 _foundry-data
 _foundry-data-v14

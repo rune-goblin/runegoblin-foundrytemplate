@@ -65,7 +65,7 @@ dist/                build output (gitignored) — what module.json loads
 lang/en.json         localization
 packs/               LevelDB compendium packs (built)
   _source/           human-readable JSON pack sources (tracked; packed with fvtt)
-scripts/link-dev.ts  sandbox symlink setup (run via node's TS type-stripping)
+scripts/setup.ts     dev path resolution + symlink setup (run via node's TS type-stripping)
 ```
 
 ## Develop
@@ -75,16 +75,33 @@ npm install
 npm run build      # emits dist/pf2e-module-template.{js,css}
 npm run dev        # vite build --watch
 npm run check      # svelte-check + tsc --noEmit (foundry-pf2e types)
-npm run link-dev   # symlink this repo into Foundry + pull reference sources in
+npm run setup      # resolve dev paths, then symlink this repo into Foundry
 ```
 
-`npm run link-dev` symlinks the repo into **both** Foundry instances'
-`Data/modules/pf2e-module-template`, and pulls these gitignored references into
-the repo for reading (not for distribution):
+### `npm run setup`
+
+A one-shot dev linker. It works out three things — prompting only when it can't
+detect them — then symlinks the repo into Foundry and pulls reference sources in:
+
+1. **Your Foundry Data dir.** Detected per-platform (macOS `~/Library/Application
+   Support/FoundryVTT{,-v14}/Data`, Windows `%LOCALAPPDATA%\FoundryVTT\Data`, Linux
+   `~/.local/share/FoundryVTT/Data`), or via a `FOUNDRY_DATA` env var. If none
+   resolve, it asks you to paste the path.
+2. **The PF2e system source** (optional — types also come from the `foundry-pf2e`
+   dep). If it can't find a checkout it offers to **clone** `foundryvtt/pf2e`
+   (defaulting beside this repo), **point** at an existing one, or **skip**.
+3. **The symlinks.** It then asks before creating them (say no, or pass `--no-link`,
+   to resolve paths without touching the filesystem).
+
+Resolved paths are cached in `.dev-paths.json` (gitignored) so re-runs don't
+re-prompt. Flags: `--reconfigure` (ask again), `--no-link` (paths only), `--yes`
+(non-interactive — link whatever was detected). It links into **every** Foundry
+instance it finds, and creates these gitignored references for reading (not
+distribution):
 
 | In-repo link            | Points at                                  |
 |-------------------------|--------------------------------------------|
-| `_pf2e-source`          | `repos/pf2e` (PF2e system source / types)  |
+| `_pf2e-source`          | your `pf2e` checkout (system source / types) |
 | `_foundry-data-v14`     | `FoundryVTT-v14/Data`                       |
 | `_foundry-data`         | `FoundryVTT/Data`                           |
 | `__foundryModules-v14`  | `FoundryVTT-v14/Data/modules`              |
