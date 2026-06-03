@@ -6,12 +6,15 @@ with it. Canonical text: https://opensource.org/license/mit
 Pathfinder / Paizo content
 --------------------------
 The MIT grant covers only this template's code. It grants no rights to Paizo
-intellectual property — Pathfinder rules text, names, and other Paizo content are
-licensed separately. See https://paizo.com/licenses
+intellectual property — Pathfinder rules text, names, and other Paizo content
+are licensed separately. See https://paizo.com/licenses
 
-This template includes no code from the Foundry VTT PF2e system. Heads-up if you
-add some: that system is distributed under Apache 2.0, so redistributing any of it
-means complying with those terms. See
+
+PF2E System for foundryVTT
+--------------------------
+This template includes no PF2e system code, though cloning the system repo for
+reference is well worth it. The PF2e system is licensed under Apache 2.0 — if
+you copy any of its code into your module, comply with those terms. See
 https://github.com/foundryvtt/pf2e/blob/v14-dev/LICENSE
 
 
