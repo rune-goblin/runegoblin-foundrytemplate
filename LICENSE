@@ -1,3 +1,20 @@
+This template's own code is licensed under the MIT License — a short, permissive
+license that lets anyone use, copy, modify, and redistribute it, including in
+commercial work, provided the copyright notice and the license text below travel
+with it. Canonical text: https://opensource.org/license/mit
+
+Pathfinder / Paizo content
+--------------------------
+The MIT grant covers only this template's code. It grants no rights to Paizo
+intellectual property — Pathfinder rules text, names, and other Paizo content are
+licensed separately. See https://paizo.com/licenses
+
+This template includes no code from the Foundry VTT PF2e system. Heads-up if you
+add some: that system is distributed under Apache 2.0, so redistributing any of it
+means complying with those terms. See
+https://github.com/foundryvtt/pf2e/blob/v14-dev/LICENSE
+
+
 MIT License
 
 Copyright (c) 2024-2026 Mark Pearce
