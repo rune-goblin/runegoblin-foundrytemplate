@@ -8,7 +8,8 @@ const moduleJSON = JSON.parse(readFileSync(new URL('./module.json', import.meta.
 export default defineConfig({
   root: 'src/',
   base: `/modules/${moduleJSON.id}/dist/`,
-  plugins: [svelte()],
+  // root is src/, so point the plugin at the repo-root config (shared with svelte-check).
+  plugins: [svelte({ configFile: fileURLToPath(new URL('./svelte.config.ts', import.meta.url)) })],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

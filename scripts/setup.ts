@@ -73,43 +73,58 @@ function readConfig(): DevPaths {
   return {};
 }
 
-function foundryCandidates(): string[] {
+// Foundry's default user-data folders per platform. Recent desktop builds version the
+// folder (FoundryVTT-v14); older/server installs use a plain FoundryVTT. We scan all.
+function userDataDirs(): string[] {
+  let base: string;
+  if (process.platform === 'darwin') base = join(home, 'Library/Application Support');
+  else if (process.platform === 'win32') base = process.env.LOCALAPPDATA ?? join(home, 'AppData/Local');
+  else base = process.env.XDG_DATA_HOME ?? join(home, '.local/share');
+  return ['FoundryVTT-v14', 'FoundryVTT-v13', 'FoundryVTT'].map((n) => join(base, n));
+}
+
+// The configured data dir lives in Config/options.json's `dataPath` (which may point
+// elsewhere than the folder holding it), with content under `<dataPath>/Data`.
+function dataDirFor(userData: string): string | null {
+  const options = join(userData, 'Config', 'options.json');
+  if (existsSync(options)) {
+    try {
+      const { dataPath } = JSON.parse(readFileSync(options, 'utf8')) as { dataPath?: string };
+      if (dataPath) return join(dataPath, 'Data');
+    } catch {
+      /* malformed options.json — fall through to the conventional layout */
+    }
+  }
+  const conventional = join(userData, 'Data');
+  return existsSync(conventional) ? conventional : null;
+}
+
+function detectFoundryData(): string[] {
+  if (process.env.FOUNDRY_DATA) return [process.env.FOUNDRY_DATA];
   const out: string[] = [];
-  if (process.env.FOUNDRY_DATA) out.push(process.env.FOUNDRY_DATA);
-  if (process.platform === 'darwin') {
-    const base = join(home, 'Library/Application Support');
-    out.push(join(base, 'FoundryVTT-v14/Data'), join(base, 'FoundryVTT/Data'));
-  } else if (process.platform === 'win32') {
-    const local = process.env.LOCALAPPDATA ?? join(home, 'AppData/Local');
-    out.push(join(local, 'FoundryVTT-v14/Data'), join(local, 'FoundryVTT/Data'));
-  } else {
-    const xdg = process.env.XDG_DATA_HOME ?? join(home, '.local/share');
-    out.push(join(xdg, 'FoundryVTT-v14/Data'), join(xdg, 'FoundryVTT/Data'));
+  for (const ud of userDataDirs()) {
+    const dd = dataDirFor(ud);
+    if (dd && existsSync(dd) && !out.includes(dd)) out.push(dd);
   }
   return out;
 }
 
 async function resolveFoundryData(cfg: DevPaths): Promise<string[]> {
   let found = (cfg.foundryData ?? []).filter(existsSync);
-  if (found.length === 0) found = foundryCandidates().filter(existsSync);
+  if (found.length === 0) found = detectFoundryData();
   if (found.length > 0) {
     for (const d of found) console.log(`✓ Foundry data: ${d}`);
     return found;
   }
-  console.log('• No Foundry data directory at the usual locations.');
+  console.log('• No Foundry data dir found (no Config/options.json at the default locations).');
   if (!interactive) {
     console.log('  Set FOUNDRY_DATA or run interactively to point at it; skipping Foundry links.');
     return [];
   }
-  const entered = expand(await ask('  Path to your Foundry Data dir (holds modules/, worlds/):', foundryCandidates()[0]));
-  if (!entered) return [];
-  if (existsSync(entered)) return [entered];
-  if (await confirm(`  ${entered} doesn't exist — create it?`, true)) {
-    mkdirSync(join(entered, 'modules'), { recursive: true });
-    console.log(`  created ${entered}`);
-    return [entered];
-  }
-  console.log('  skipping Foundry links.');
+  // Foundry picks/creates its own data dir — we only link into an existing one, never make it.
+  const entered = expand(await ask('  Path to your Foundry Data dir (the folder holding modules/, worlds/):'));
+  if (entered && existsSync(entered)) return [entered];
+  if (entered) console.log(`  ${entered} doesn't exist — skipping Foundry links.`);
   return [];
 }
 

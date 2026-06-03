@@ -5,7 +5,7 @@
   "type": "module",
   "description": "PF2e Foundry VTT module template (hybrid content + scripted Svelte UI).",
   "engines": {
-    "node": ">=22.6.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "init": "node scripts/init.ts",
@@ -16,11 +16,11 @@
     "setup": "node scripts/setup.ts"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^4.0.4",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "foundry-pf2e": "github:7H3LaughingMan/foundry-pf2e",
-    "svelte": "^5.19.0",
+    "svelte": "^5.46.4",
     "svelte-check": "^4.1.4",
     "typescript": "^5.9.2",
-    "vite": "^5.4.11"
+    "vite": "^8.0.0"
   }
 }

@@ -83,10 +83,13 @@ npm run setup      # resolve dev paths, then symlink this repo into Foundry
 A one-shot dev linker. It works out three things — prompting only when it can't
 detect them — then symlinks the repo into Foundry and pulls reference sources in:
 
-1. **Your Foundry Data dir.** Detected per-platform (macOS `~/Library/Application
-   Support/FoundryVTT{,-v14}/Data`, Windows `%LOCALAPPDATA%\FoundryVTT\Data`, Linux
-   `~/.local/share/FoundryVTT/Data`), or via a `FOUNDRY_DATA` env var. If none
-   resolve, it asks you to paste the path.
+1. **Your Foundry Data dir.** Read from Foundry's own `Config/options.json`
+   (`dataPath`) in the default user-data folder for your platform — macOS
+   `~/Library/Application Support/FoundryVTT*`, Windows `%LOCALAPPDATA%\FoundryVTT*`,
+   Linux `~/.local/share/FoundryVTT*` — which resolves even a relocated data dir. A
+   `FOUNDRY_DATA` env var overrides. If nothing resolves (e.g. a headless server with a
+   custom `--dataPath`), it asks you to paste the path; it links into an existing dir
+   only and never creates one (Foundry manages its own).
 2. **The PF2e system source** (optional — types also come from the `foundry-pf2e`
    dep). If it can't find a checkout it offers to **clone** `foundryvtt/pf2e`
    (defaulting beside this repo), **point** at an existing one, or **skip**.

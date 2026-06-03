@@ -47,9 +47,10 @@ the emitted CSS to the stable `<id>.css` name `module.json` expects.
 - `npm run build` — `vite build`.
 - `npm run dev` — `vite build --watch`.
 - `npm run check` — `svelte-check && tsc --noEmit` (uses `foundry-pf2e` types).
-- `npm run setup` — resolves dev paths (detects the Foundry data dir per-platform,
-  optionally clones/points at the PF2e source), then symlinks the repo into Foundry's
-  `Data/modules/` and pulls reference sources in. Caches to `.dev-paths.json`.
+- `npm run setup` — resolves dev paths (reads the Foundry data dir from its
+  `Config/options.json` `dataPath`; optionally clones/points at the PF2e source), then
+  symlinks the repo into Foundry's `Data/modules/` and pulls reference sources in.
+  Caches to `.dev-paths.json`.
 
 ## What is and isn't bundled
 
