@@ -13,6 +13,7 @@ export class ExampleApp extends ApplicationV2 {
   };
 
   #component?: ReturnType<typeof mount>;
+  #root?: HTMLElement;
 
   static open(): ExampleApp {
     const app = new ExampleApp();
@@ -20,10 +21,15 @@ export class ExampleApp extends ApplicationV2 {
     return app;
   }
 
+  // AppV2 runs _renderHTML on every render; mount once and reuse the node, so a
+  // re-render neither leaks a second component (the first is never unmounted) nor
+  // discards Svelte's reactive state. Svelte drives all updates from here.
   protected override async _renderHTML(): Promise<HTMLElement> {
-    const target = document.createElement('div');
-    this.#component = mount(Example, { target, props: { app: this } });
-    return target;
+    if (!this.#component) {
+      this.#root = document.createElement('div');
+      this.#component = mount(Example, { target: this.#root, props: { app: this } });
+    }
+    return this.#root!;
   }
 
   protected override _replaceHTML(result: HTMLElement, content: HTMLElement): void {
@@ -34,6 +40,7 @@ export class ExampleApp extends ApplicationV2 {
     if (this.#component) {
       unmount(this.#component);
       this.#component = undefined;
+      this.#root = undefined;
     }
   }
 }

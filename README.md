@@ -70,9 +70,11 @@ rm -rf .git && git init -b main
 npm install && npm run build
 ```
 
-`npm run init -- <id> [--title "..."]` rewrites the id and title across the repo, then
-removes itself and the template's `CHANGELOG.md` (your module starts its own history). It
-leaves `.claude/` (the bundled skill) alone and derives the title from the id when omitted.
+`npm run init -- <id> [--title "..."] [--org <github-owner>]` rewrites the id and title
+across the repo, then removes itself and the template's `CHANGELOG.md` (your module starts
+its own history). It leaves `.claude/` (the bundled skill) alone and derives the title from
+the id when omitted. Pass `--org` to repoint the `module.json` `url`/`manifest`/`download`
+URLs at your GitHub owner (defaults to `rune-goblin`).
 
 <!-- TEMPLATE:END -->
 ## Layout

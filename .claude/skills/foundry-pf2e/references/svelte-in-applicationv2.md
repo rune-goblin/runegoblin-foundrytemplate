@@ -26,6 +26,7 @@ export class ExampleApp extends ApplicationV2 {
   };
 
   #component?: ReturnType<typeof mount>;
+  #root?: HTMLElement;
 
   static open(): ExampleApp {
     const app = new ExampleApp();
@@ -33,10 +34,15 @@ export class ExampleApp extends ApplicationV2 {
     return app;
   }
 
+  // AppV2 runs _renderHTML on every render; mount once and reuse the node, so a
+  // re-render neither leaks a second component (the first is never unmounted) nor
+  // discards Svelte's reactive state. Svelte drives all updates from here.
   protected override async _renderHTML(): Promise<HTMLElement> {
-    const target = document.createElement('div');
-    this.#component = mount(Example, { target, props: { app: this } });
-    return target;
+    if (!this.#component) {
+      this.#root = document.createElement('div');
+      this.#component = mount(Example, { target: this.#root, props: { app: this } });
+    }
+    return this.#root!;
   }
 
   protected override _replaceHTML(result: HTMLElement, content: HTMLElement): void {
@@ -47,14 +53,18 @@ export class ExampleApp extends ApplicationV2 {
     if (this.#component) {
       unmount(this.#component);
       this.#component = undefined;
+      this.#root = undefined;
     }
   }
 }
 ```
 
 Lifecycle mapping:
-- `_renderHTML()` — `mount(Component, { target, props })` into a detached element; return it.
-- `_replaceHTML(result, content)` — `content.replaceChildren(result)`.
+- `_renderHTML()` — mount the component **once** into a detached element and cache both;
+  return the cached element on every later render. Re-mounting per render leaks the prior
+  component (it's never unmounted) and throws away Svelte's reactive state.
+- `_replaceHTML(result, content)` — `content.replaceChildren(result)` (idempotent — `result`
+  is the same cached node each render).
 - `_preClose()` — `unmount(this.#component)` so the component cleans up.
 
 ApplicationV2's abstract signatures (in the `foundry-pf2e` typedefs) are

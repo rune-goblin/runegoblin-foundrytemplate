@@ -12,7 +12,7 @@
     "init": "node scripts/init.ts",
     "build": "vite build",
     "dev": "vite build --watch",
-    "check": "svelte-check --tsconfig ./tsconfig.json && tsc --noEmit",
+    "check": "svelte-check --tsconfig ./tsconfig.json && tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "clean": "rm -rf dist",
     "setup": "node scripts/setup.ts",
     "pack": "fvtt package pack",
@@ -21,7 +21,8 @@
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "^3.0.3",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
-    "foundry-pf2e": "github:7H3LaughingMan/foundry-pf2e",
+    "@types/node": "^22.12.0",
+    "foundry-pf2e": "github:7H3LaughingMan/foundry-pf2e#78aa843c39a59e06ede407a45ed1fd627169b5a3",
     "svelte": "^5.46.4",
     "svelte-check": "^4.1.4",
     "typescript": "^5.9.2",

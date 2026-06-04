@@ -1,30 +1,38 @@
 // Initialize a new module from this template. Run once:
-//   npm run init -- <new-module-id> [--title "Human Title"]
-// Rewrites the template id/title across the repo, then deletes itself.
+//   npm run init -- <new-module-id> [--title "Human Title"] [--org <github-owner>]
+// Rewrites the template id/title/org across the repo, then deletes itself.
 import { readdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { join, extname, relative } from 'node:path';
 
 const TOKEN_ID = 'pf2e-module-template';
 const TOKEN_TITLE = 'PF2e Module Template';
+const TOKEN_ORG = 'rune-goblin'; // GitHub owner in module.json url/manifest/download
 
 const repo = process.cwd();
 const args = process.argv.slice(2);
 
 let newId: string | undefined;
 let newTitle: string | undefined;
+let newOrg: string | undefined;
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
   if (a === '--title') newTitle = args[++i];
   else if (a.startsWith('--title=')) newTitle = a.slice('--title='.length);
+  else if (a === '--org') newOrg = args[++i];
+  else if (a.startsWith('--org=')) newOrg = a.slice('--org='.length);
   else if (!a.startsWith('-') && !newId) newId = a;
 }
 
 if (!newId) {
-  console.error('usage: npm run init -- <new-module-id> [--title "Human Title"]');
+  console.error('usage: npm run init -- <new-module-id> [--title "Human Title"] [--org <github-owner>]');
   process.exit(1);
 }
 if (!/^[a-z][a-z0-9-]*$/.test(newId)) {
   console.error(`invalid id "${newId}" — use lowercase letters, digits, and hyphens (e.g. pf2e-my-module)`);
+  process.exit(1);
+}
+if (newOrg && !/^[A-Za-z0-9][A-Za-z0-9-]*$/.test(newOrg)) {
+  console.error(`invalid org "${newOrg}" — use a GitHub owner name (letters, digits, hyphens)`);
   process.exit(1);
 }
 newTitle ??= newId
@@ -65,6 +73,7 @@ for (const file of walk(repo)) {
     .replaceAll(TOKEN_ID, newId)
     .replaceAll(TOKEN_TITLE, newTitle)
     .replaceAll(TOKEN_TITLE.toUpperCase(), newTitle);
+  if (newOrg) after = after.replaceAll(TOKEN_ORG, newOrg);
 
   if (file.endsWith('README.md')) after = stripTemplateBlock(after);
   if (file.endsWith('package.json')) after = after.replace(/^\s*"init": "node scripts\/init\.ts",\n/m, '');
