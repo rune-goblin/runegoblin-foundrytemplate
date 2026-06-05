@@ -11,7 +11,8 @@
   "scripts": {
     "init": "node scripts/init.ts",
     "build": "vite build",
-    "dev": "vite build --watch",
+    "dev": "vite",
+    "watch": "vite build --watch",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "clean": "rm -rf dist",
     "setup": "node scripts/setup.ts",
