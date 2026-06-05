@@ -17,7 +17,7 @@ shell — from one repo.
   `mount()`s a runes component and `unmount()`s it on close. The lifecycle plumbing is
   done. Open it from the console: `game.modules.get('pf2e-module-template').api.open()`.
 - **A Vite library build.** `src/index.ts` compiles to `dist/<id>.{js,css}`, the artifacts
-  `module.json` loads. `npm run dev` serves with HMR; `npm run check` runs `svelte-check` and `tsc`.
+  `module.json` loads. `npm run dev` serves with hot module reload (HMR); `npm run check` runs `svelte-check` and `tsc`.
 - **Compendium packs.** `packs/_source/` JSON, tracked in git and packed to LevelDB with
   the bundled `fvtt` CLI (`npm run pack`). The hybrid content workflow is set up.
 - **One-command rename.** `npm run init -- <new-id> [--title "..."]` rewrites the id and
@@ -123,10 +123,18 @@ npm run watch      # vite build --watch (rebuild dist/ on save, no HMR)
 npm run check      # svelte-check + tsc --noEmit
 ```
 
-**HMR:** with Foundry running on `:30000`, `npm run dev` starts Vite on `:30001` as a
-reverse proxy in front of it. Open **http://localhost:30001/game** (not `:30000`) and
-edits to `.svelte` components hot-swap in place, keeping state. Editing `src/index.ts`
-(hooks/bootstrap) triggers a full page reload instead — that's expected.
+**HMR** runs Vite on `:30001` as a reverse proxy *in front of* a running Foundry — it
+doesn't start Foundry and can't load your module on its own. The module's esmodule only
+loads inside an **active world**, so there's nothing to hot-swap until one is launched:
+
+1. Start Foundry, then **Launch World** (Setup → a world with this module enabled). First
+   time only: launch the world once on `:30000`, enable the module under *Manage Modules*,
+   and reload — after that it stays on.
+2. `npm run dev` (leave Foundry running).
+3. Open **http://localhost:30001/game** — *not* `:30000` — and log in.
+
+Now editing a `.svelte` component hot-swaps in place, keeping state. Editing
+`src/index.ts` (hooks/bootstrap) triggers a full page reload instead — that's expected.
 
 Prefer the plain bundle? `npm run watch` keeps the old flow: it rebuilds `dist/` on
 save; browse `:30000` and reload the browser after a `.js`/`.svelte` rebuild (Foundry

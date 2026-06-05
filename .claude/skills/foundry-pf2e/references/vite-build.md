@@ -20,6 +20,24 @@ export default defineConfig({
   base: `/modules/${moduleJSON.id}/dist/`,
   plugins: [svelte()],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+  // `npm run dev` runs Vite as a reverse proxy in front of Foundry (see Dev reload).
+  // Ignored by `vite build`.
+  server: {
+    port: 30001,
+    open: '/game',
+    proxy: {
+      // Built entry doesn't exist in dev — serve src/index.ts (so edits hot-reload) instead.
+      [`/modules/${moduleJSON.id}/dist/${moduleJSON.id}.js`]: {
+        target: `http://localhost:30001/modules/${moduleJSON.id}/dist`,
+        rewrite: () => '/index.ts',
+      },
+      // Static files Foundry serves from disk (Vite's root is src/).
+      [`^/modules/${moduleJSON.id}/(lang|packs|assets)/`]: 'http://localhost:30000',
+      // Everything outside our module → real Foundry.
+      [`^(?!/modules/${moduleJSON.id}/)`]: 'http://localhost:30000',
+      '/socket.io': { target: 'ws://localhost:30000', ws: true },
+    },
+  },
   build: {
     outDir: '../dist',
     emptyOutDir: true,
@@ -45,7 +63,8 @@ the emitted CSS to the stable `<id>.css` name `module.json` expects.
 ## Scripts
 
 - `npm run build` — `vite build`.
-- `npm run dev` — `vite build --watch`.
+- `npm run dev` — Vite **dev server** with HMR, reverse-proxying Foundry (see Dev reload).
+- `npm run watch` — `vite build --watch` (rebuild `dist/` on save, no HMR).
 - `npm run check` — `svelte-check && tsc --noEmit` (uses `foundry-pf2e` types).
 - `npm run setup` — resolves dev paths (reads the Foundry data dir from its
   `Config/options.json` `dataPath`; optionally clones/points at the PF2e source), then
@@ -88,5 +107,24 @@ dist lang packs` (exclude `packs/_source` and LevelDB `LOCK`/`LOG*`). If you add
 
 ## Dev reload
 
-Foundry hot-reloads `.hbs`/`.css`/`.json` in place but **not** esmodules — reload the
-browser (F5) after a `.js`/`.svelte` rebuild.
+`npm run dev` runs Vite as a **reverse proxy in front of Foundry**: Vite on `:30001`
+serves the module's source (with HMR) and proxies everything else — Foundry routes, the
+socket, static files — to the real server on `:30000`. The proxy rule above rewrites
+Foundry's request for the built `dist/<id>.js` back to `src/index.ts`, so Vite serves it
+transformed instead of 404'ing on a file that doesn't exist in dev.
+
+**Prerequisite:** Foundry must be running with an **active (launched) world** that has
+the module enabled — an esmodule loads only inside a world, so there's nothing to
+hot-swap until one is launched. Vite never starts Foundry; it only proxies it. Then open
+`http://localhost:30001/game` (not `:30000`) and log in. Editing a `.svelte` hot-swaps in
+place (state preserved); editing `src/index.ts` (hooks/bootstrap) triggers a full reload
+— expected, since re-running init on a live world would double-register hooks.
+
+**Svelte 5:** do **not** hand-inject `import.meta.hot.accept()` into components. The
+Svelte 5 compiler + `@sveltejs/vite-plugin-svelte` emit component HMR automatically; a
+manual accept (the Svelte-4-era trick) breaks it. The `server` block is all that's needed
+— no custom HMR plugin, no dev-manifest swap.
+
+**Fallback:** `npm run watch` (`vite build --watch`) rebuilds `dist/` on save; browse
+`:30000` and reload the browser (F5) after a `.js`/`.svelte` rebuild. Foundry hot-reloads
+`.hbs`/`.css`/`.json` in place but **not** esmodules.
