@@ -46,25 +46,25 @@ shell — from one repo.
 
 ## Starting with Claude Code
 
+Smoothest path: have the [GitHub CLI](https://cli.github.com) installed and
+authenticated (`gh auth login`) first. Not required — the UI flow works without it —
+but it lets the setup create and clone your repo with no browser steps.
+
 In a new session, fill in the blanks and paste this:
 
 ```text
-Set up a new Foundry VTT PF2e module from this template:
+Set up a new Foundry VTT PF2e module from this template, following its
+README's "Use this template manually" section:
 https://github.com/rune-goblin/runegoblin-foundrytemplate
 
-GitHub repo:  https://github.com/<account> or local only
-local path:   <path to folder containing repo, e.g. ~/repos/pf2e-my-module>
+GitHub repo:  https://github.com/<account>, or "local only"
+local path:   <containing folder, e.g. ~/repos/pf2e-my-module>
 module id:    <my-module>   (lowercase + hyphens; usually the repo name)
 title:        <My Module>
 
-Follow the README's "Use this template manually" section. Default to the recommended
-GitHub CLI flow (gh repo create <account>/<my-module> --template
-rune-goblin/runegoblin-foundrytemplate --private --clone) unless I wrote "local only",
-in which case use the local-only flow. Then, in order: npm run init, npm install, and
-npm run build. If Foundry is installed locally, run npm run setup too. Then run
-npm run check to confirm it's green; for a GitHub repo, also confirm module.json
-shows my owner/author rather than the <your-org>/<your-name> placeholders. Finally,
-tell me how to open the example window. Ask first if anything is unclear.
+Default to the GitHub CLI flow; with no gh, fall back to the README's UI flow. If
+Foundry is installed locally, also run npm run setup. Then tell me how to open the
+example window.
 ```
 
 ## Use this template manually
@@ -74,7 +74,7 @@ paths: create **a GitHub repo** (recommended — `npm run init` auto-fills your 
 author from the repo's `origin`) or go **local only**. Either way, `npm run init` renames
 the module.
 
-**GitHub repo — CLI (recommended)** — create, clone, and detach history in one step:
+**GitHub repo — CLI (recommended)** — needs the [GitHub CLI](https://cli.github.com), authed once via `gh auth login`. Creates, clones, and detaches history in one step (no `gh`? use the UI flow below):
 
 ```bash
 gh repo create <your-org>/pf2e-my-module \
@@ -85,7 +85,7 @@ npm run init -- pf2e-my-module --title "PF2e My Module"
 npm install && npm run build && npm run check
 ```
 
-**GitHub repo — UI** — **Use this template → Create a new repository**, then:
+**GitHub repo — UI (no `gh` needed)** — **Use this template → Create a new repository**, then:
 
 ```bash
 git clone git@github.com:<your-org>/pf2e-my-module.git
