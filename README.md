@@ -52,13 +52,15 @@ In a new session, fill in the blanks and paste this:
 Set up a new Foundry VTT PF2e module from this template:
 https://github.com/rune-goblin/runegoblin-foundrytemplate
 
-  GitHub repo:  https://github.com/<my-org>/<pf2e-my-module>   (or write "local only")
-  local path:   <folder to create on disk, e.g. ~/repos/pf2e-my-module>
-  module id:    <pf2e-my-module>   (lowercase + hyphens; usually the repo name)
-  title:        <My Module>
+GitHub repo:  https://github.com/<account> or local only
+local path:   <path to folder containing repo, e.g. ~/repos/pf2e-my-module>
+module id:    <my-module>   (lowercase + hyphens; usually the repo name)
+title:        <My Module>
 
-Follow the README's "Use this template manually" section for the matching flow,
-in order: create the repo at the local path, then npm run init, npm install, and
+Follow the README's "Use this template manually" section. Default to the recommended
+GitHub CLI flow (gh repo create <account>/<my-module> --template
+rune-goblin/runegoblin-foundrytemplate --private --clone) unless I wrote "local only",
+in which case use the local-only flow. Then, in order: npm run init, npm install, and
 npm run build. If Foundry is installed locally, run npm run setup too. Then run
 npm run check to confirm it's green; for a GitHub repo, also confirm module.json
 shows my owner/author rather than the <your-org>/<your-name> placeholders. Finally,
