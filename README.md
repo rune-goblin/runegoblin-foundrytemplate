@@ -46,54 +46,72 @@ shell — from one repo.
 
 ## Starting with Claude Code
 
-In a new session, paste a prompt like this:
+In a new session, fill in the blanks and paste this:
 
 ```text
-Create a new repo called <your-module-name> in <filepath> using the template at
-https://github.com/rune-goblin/runegoblin-foundrytemplate. Follow the template's setup
-instructions and create the developer environment.
+Set up a new Foundry VTT PF2e module from this template:
+https://github.com/rune-goblin/runegoblin-foundrytemplate
+
+  GitHub repo:  https://github.com/<my-org>/<pf2e-my-module>   (or write "local only")
+  local path:   <folder to create on disk, e.g. ~/repos/pf2e-my-module>
+  module id:    <pf2e-my-module>   (lowercase + hyphens; usually the repo name)
+  title:        <My Module>
+
+Follow the README's "Use this template manually" section for the matching flow,
+in order: create the repo at the local path, then npm run init, npm install, and
+npm run build. If Foundry is installed locally, run npm run setup too. Then run
+npm run check to confirm it's green; for a GitHub repo, also confirm module.json
+shows my owner/author rather than the <your-org>/<your-name> placeholders. Finally,
+tell me how to open the example window. Ask first if anything is unclear.
 ```
 
 ## Use this template manually
 
-This is a GitHub **template repository**. Create a module from it, then `npm run init`
-to rename it.
+This is a GitHub **template repository**, and like the prompt above you pick one of two
+paths: create **a GitHub repo** (recommended — `npm run init` auto-fills your owner and
+author from the repo's `origin`) or go **local only**. Either way, `npm run init` renames
+the module.
 
-**GitHub CLI (recommended)** — create, clone, and detach history in one step:
+**GitHub repo — CLI (recommended)** — create, clone, and detach history in one step:
 
 ```bash
-gh repo create rune-goblin/pf2e-my-module \
+gh repo create <your-org>/pf2e-my-module \
   --template rune-goblin/runegoblin-foundrytemplate \
   --private --clone
 cd pf2e-my-module
 npm run init -- pf2e-my-module --title "PF2e My Module"
-npm install && npm run build
+npm install && npm run build && npm run check
 ```
 
-**GitHub UI** — **Use this template → Create a new repository**, then:
+**GitHub repo — UI** — **Use this template → Create a new repository**, then:
 
 ```bash
-git clone git@github.com:rune-goblin/pf2e-my-module.git
+git clone git@github.com:<your-org>/pf2e-my-module.git
 cd pf2e-my-module
 npm run init -- pf2e-my-module --title "PF2e My Module"
-npm install && npm run build
+npm install && npm run build && npm run check
 ```
 
-**Plain clone** — start your own history:
+**Local only** — no GitHub repo yet, so pass your owner with `--org` (or add it later —
+`npm run setup` offers to, once an `origin` exists):
 
 ```bash
 git clone git@github.com:rune-goblin/runegoblin-foundrytemplate.git pf2e-my-module
 cd pf2e-my-module
-npm run init -- pf2e-my-module --title "PF2e My Module"
-rm -rf .git && git init -b main
-npm install && npm run build
+rm -rf .git && git init -b main                                         # detach template history first
+npm run init -- pf2e-my-module --title "PF2e My Module" --org <your-org>
+npm install && npm run build && npm run check
 ```
 
-`npm run init -- <id> [--title "..."] [--org <github-owner>]` rewrites the id and title
-across the repo, then removes itself and the template's `CHANGELOG.md` (your module starts
-its own history). It leaves `.claude/` (the bundled skill) alone and derives the title from
-the id when omitted. Pass `--org` to repoint the `module.json` `url`/`manifest`/`download`
-URLs at your GitHub owner (defaults to `rune-goblin`).
+`npm run init -- <id> [--title "..."] [--org <github-owner>] [--author "Name"]` rewrites the
+id and title across the repo, then removes itself and the template's `CHANGELOG.md` (your
+module starts its own history). It fills the `module.json` author and `url`/`manifest`/`download`
+URLs from your GitHub owner (auto-detected from the repo's `origin` remote) and `git config
+user.name`; pass `--org`/`--author` to override, or when there's no `origin` yet (the local-only
+clone above detaches it). It leaves `.claude/` (the bundled skill) alone and derives the title
+from the id when omitted.
+
+Then `npm run setup` links the module into Foundry for local development — see [Develop](#develop).
 
 <!-- TEMPLATE:END -->
 ## Layout
