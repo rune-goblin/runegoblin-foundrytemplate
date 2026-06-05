@@ -35,7 +35,12 @@ shell — from one repo.
   `module.<id>` socket channel, and license and author metadata all key off the module id.
 
 <!-- TEMPLATE:START -->
-## Use this template
+
+## Starting with claude code
+In a new session prompt something like
+"create a new repo called <your-module-name> in <filepath> using the https://github.com/rune-goblin/runegoblin-foundrytemplate Follow the template's setup instructions and create the developer environment.
+
+## Use this template manually
 
 This is a GitHub **template repository**. Create a module from it, then `npm run init`
 to rename it.
