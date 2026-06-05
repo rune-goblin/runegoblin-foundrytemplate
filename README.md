@@ -36,9 +36,13 @@ shell — from one repo.
 
 <!-- TEMPLATE:START -->
 
-## Starting with claude code
-In a new session prompt something like
-"create a new repo called <your-module-name> in <filepath> using the https://github.com/rune-goblin/runegoblin-foundrytemplate Follow the template's setup instructions and create the developer environment.
+## Starting with Claude Code
+
+In a new session, prompt something like:
+
+> Create a new repo called `<your-module-name>` in `<filepath>` using the template at
+> https://github.com/rune-goblin/runegoblin-foundrytemplate. Follow the template's setup
+> instructions and create the developer environment.
 
 ## Use this template manually
 
