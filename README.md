@@ -46,9 +46,9 @@ shell — from one repo.
 
 ## Starting with Claude Code
 
-Smoothest path: have the [GitHub CLI](https://cli.github.com) installed and
-authenticated (`gh auth login`) first. Not required — the UI flow works without it —
-but it lets the setup create and clone your repo with no browser steps.
+Install and authenticate the [GitHub CLI](https://cli.github.com) (`gh auth login`)
+before you start. This is optional. The UI flow works without it, but the CLI lets
+Claude create and clone your repo with no browser steps.
 
 In a new session, fill in the blanks and paste this:
 
