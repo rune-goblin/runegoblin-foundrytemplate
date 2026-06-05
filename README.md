@@ -53,12 +53,12 @@ Claude create and clone your repo with no browser steps.
 In a new session, fill in the blanks and paste this:
 
 ```text
-Set up a new Foundry VTT PF2e module from this template, following its
+Smoothest Path: Set up a new Foundry VTT PF2e module from this template, following its
 README's "Use this template manually" section:
 https://github.com/rune-goblin/runegoblin-foundrytemplate
 
 GitHub repo:  https://github.com/<account>, or "local only"
-local path:   <containing folder, e.g. ~/repos/pf2e-my-module>
+local path:   <containing folder, e.g. ~/repos/>
 module id:    <my-module>   (lowercase + hyphens; usually the repo name)
 title:        <My Module>
 
