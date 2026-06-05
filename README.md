@@ -10,27 +10,35 @@ shell — from one repo.
 
 ## What you get
 
-- **A v14-only stack.** TypeScript runs source and tooling alike: `vite.config.ts`,
-  `svelte.config.ts`, and `scripts/*.ts` execute straight through Node ≥ 22.12, with no
+- **FoundryVTT v14 Stack.** TypeScript runs source and tooling alike: `vite.config.ts`,
+  `svelte.config.ts`, and `scripts/*.ts` run on Node ≥ 22.12, with no
   `tsx` or `ts-node`. No v1 Foundry APIs — ApplicationV2, DialogV2, and DataModel only.
+
 - **Svelte 5 in ApplicationV2, wired up.** A working window (`src/ui/ExampleApp.ts`)
-  `mount()`s a runes component and `unmount()`s it on close. The lifecycle plumbing is
-  done. Open it from the console: `game.modules.get('pf2e-module-template').api.open()`.
-- **A Vite library build.** `src/index.ts` compiles to `dist/<id>.{js,css}`, the artifacts
+  `mount()`s a runes component and `unmount()`s it on close. Open it from the console:
+  `game.modules.get('pf2e-module-template').api.open()`.
+
+- **Vite Hot Module Reload.** `src/index.ts` compiles to `dist/<id>.{js,css}`, the artifacts
   `module.json` loads. `npm run dev` serves with hot module reload (HMR); `npm run check` runs `svelte-check` and `tsc`.
+
 - **Compendium packs.** `packs/_source/` JSON, tracked in git and packed to LevelDB with
-  the bundled `fvtt` CLI (`npm run pack`). The hybrid content workflow is set up.
+  the bundled `fvtt` CLI (`npm run pack`).
+
 - **One-command rename.** `npm run init -- <new-id> [--title "..."]` rewrites the id and
   title across the manifest, sources, flags, socket channel, and pack names, then deletes
-  itself. Your module is wired in seconds.
+  itself.
+
 - **Dev setup that finds Foundry.** `npm run setup` detects your Foundry data dir from
   `options.json`, symlinks the module in, and pulls reference sources. It prompts only when
   it cannot resolve a path itself.
+
 - **Release on tag.** Push `vX.Y.Z`; `release.yml` stamps the version, type-checks, builds,
   and publishes a GitHub release with `module.json` and the module zip.
+
 - **AI authoring built in.** A bundled `foundry-pf2e` Claude Code skill (`.claude/skills/`)
   carries the Foundry/PF2e API, packs, Svelte-in-ApplicationV2, build, and sync rules into
   every module you make from this template.
+
 - **Sensible defaults.** Localization (`lang/en.json`), a public `api` surface, the
   `module.<id>` socket channel, and license and author metadata all key off the module id.
 
@@ -123,9 +131,9 @@ npm run watch      # vite build --watch (rebuild dist/ on save, no HMR)
 npm run check      # svelte-check + tsc --noEmit
 ```
 
-**HMR** runs Vite on `:30001` as a reverse proxy *in front of* a running Foundry — it
-doesn't start Foundry and can't load your module on its own. The module's esmodule only
-loads inside an **active world**, so there's nothing to hot-swap until one is launched:
+**HMR** runs Vite on `:30001` as a reverse proxy *in front of* a running Foundry. Foundry
+must already be running, and the esmodule loads only inside an **active world** — so
+there's nothing to hot-swap until you launch one:
 
 1. Start Foundry, then **Launch World** (Setup → a world with this module enabled). First
    time only: launch the world once on `:30000`, enable the module under *Manage Modules*,
