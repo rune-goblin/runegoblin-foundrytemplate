@@ -36,9 +36,10 @@ jobs:
       - name: Build release zip
         run: |
           zip -r pf2e-module-template.zip \
-            module.json LICENSE README.md dist lang packs \
+            module.json LICENSE README.md dist lang packs assets \
             -x "packs/_source/*" \
-            -x "packs/*/LOCK" -x "packs/*/LOG" -x "packs/*/LOG.old" -x "packs/*/*.log"
+            -x "packs/*/LOCK" -x "packs/*/LOG" -x "packs/*/LOG.old" -x "packs/*/*.log" \
+            -x "*/.DS_Store"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

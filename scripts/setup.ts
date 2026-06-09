@@ -4,7 +4,8 @@
 //   2. Find the Foundry data dir — detect per-platform, else ask for the path.
 //   3. Resolve the PF2e system source — detect, clone foundryvtt/pf2e, point at a
 //      checkout, or skip (types also ship via the foundry-pf2e dep, so it's optional).
-//   4. Symlink references INTO the repo and this repo OUT into Foundry's modules/.
+//   4. Symlink references INTO the repo, then scaffold a *real* module dir in Foundry's
+//      modules/ whose entries symlink back to the repo (see scaffoldDevModule).
 // Resolved paths cache in .dev-paths.json (gitignored) so re-runs don't re-ask.
 // Flags: --reconfigure (ask again), --no-link (resolve+cache only), --yes (no prompts).
 import {
@@ -175,8 +176,10 @@ async function resolvePf2eSource(cfg: DevPaths): Promise<string | undefined> {
 // Windows can't make plain dir symlinks without admin; junctions need no privilege.
 const symlinkType = process.platform === 'win32' ? 'junction' : undefined;
 
-function link(linkPath: string, target: string): void {
-  if (!existsSync(target)) {
+// allowMissing lets us link dist/ before it's built — a dangling link that resolves once
+// `npm run build` (or the Vite dev server) produces it.
+function link(linkPath: string, target: string, allowMissing = false): void {
+  if (!allowMissing && !existsSync(target)) {
     console.log(`skip (missing target): ${basename(linkPath)} → ${target}`);
     return;
   }
@@ -190,6 +193,31 @@ function link(linkPath: string, target: string): void {
   }
   symlinkSync(target, linkPath, symlinkType);
   console.log(`linked ${basename(linkPath)} → ${target}`);
+}
+
+// Dev install: a *real* module dir whose entries symlink back to the repo, NOT one symlink
+// pointing at the whole repo. The whole-repo form exposes node_modules/.git to Foundry's file
+// picker, makes the repo's module.json the one Foundry loads, and ships nothing on its own —
+// so any non-symlink install (a release, a copied folder) had no assets. Per-entry symlinks
+// keep live edits and the Vite proxy's HMR while matching the shape `npm run deploy` copies.
+// We link the content dirs (assets/lang/packs) + the manifest + dist; the TypeScript sources
+// under src/ stay out of the module.
+function scaffoldDevModule(modulesDir: string): void {
+  const dest = join(modulesDir, ID);
+  const st = lstatSync(dest, { throwIfNoEntry: false });
+  if (st?.isSymbolicLink()) {
+    unlinkSync(dest); // drop the legacy whole-repo symlink
+  } else if (st && !st.isDirectory()) {
+    console.log(`skip (exists, not a dir or symlink): ${dest}`);
+    return;
+  }
+  mkdirSync(dest, { recursive: true });
+  link(join(dest, 'module.json'), join(repo, 'module.json'));
+  link(join(dest, 'dist'), join(repo, 'dist'), true);
+  link(join(dest, 'lang'), join(repo, 'lang'));
+  link(join(dest, 'packs'), join(repo, 'packs'));
+  link(join(dest, 'assets'), join(repo, 'assets'));
+  console.log(`scaffolded dev module → ${dest}`);
 }
 
 const ORG_PLACEHOLDER = '<your-org>';
@@ -271,7 +299,7 @@ if (noLink) {
     link(join(repo, '_foundry-data'), foundryData);
     link(join(repo, '_foundry-modules'), join(foundryData, 'modules'));
     const modulesDir = join(foundryData, 'modules');
-    if (existsSync(modulesDir)) link(join(modulesDir, ID), repo);
+    if (existsSync(modulesDir)) scaffoldDevModule(modulesDir);
     else console.log(`skip (no modules dir): ${modulesDir}`);
   }
   rl?.close();

@@ -21,16 +21,20 @@ shell — from one repo.
 - **Vite Hot Module Reload.** `src/index.ts` compiles to `dist/<id>.{js,css}`, the artifacts
   `module.json` loads. `npm run dev` serves with hot module reload (HMR); `npm run check` runs `svelte-check` and `tsc`.
 
-- **Compendium packs.** `packs/_source/` JSON, tracked in git and packed to LevelDB with
-  the bundled `fvtt` CLI (`npm run pack`).
+- **Compendium packs.** `packs/_source/` JSON sources (tracked) compile to LevelDB on
+  `npm run build` (gitignored, like `dist/`), via the bundled `fvtt` CLI. Ships an example
+  "Open Example" macro that opens the demo window.
 
 - **One-command rename.** `npm run init -- <new-id> [--title "..."]` rewrites the id and
   title across the manifest, sources, flags, socket channel, and pack names, then deletes
   itself.
 
 - **Dev setup that finds Foundry.** `npm run setup` detects your Foundry data dir from
-  `options.json`, symlinks the module in, and pulls reference sources. It prompts only when
-  it cannot resolve a path itself.
+  `options.json`, scaffolds the module into it (a real dir whose `module.json`/`dist`/`lang`/
+  `packs`/`assets` symlink back to the repo — not a whole-repo symlink), and pulls reference
+  sources. It prompts only when it cannot resolve a path itself. `npm run deploy` instead
+  **copies** a clean, self-contained module (assets and packs included) — the same shape the
+  release zip ships, for testing the artifact or installing without the repo.
 
 - **Release on tag.** Push `vX.Y.Z`; `release.yml` stamps the version, type-checks, builds,
   and publishes a GitHub release with `module.json` and the module zip.
@@ -122,16 +126,39 @@ Then `npm run setup` links the module into Foundry for local development — see
 module.json          manifest (esmodules, styles, packs, pf2e relationship)
 src/                 TypeScript + Svelte source (entry: src/index.ts)
   index.ts           registers hooks, exposes game.modules.get(id).api
-  ui/ExampleApp.ts   ApplicationV2 shell that mounts a Svelte component
-  ui/Example.svelte  sample Svelte 5 component (runes)
+  constants.ts       MODULE_ID (used to build modules/<id>/… asset paths)
+  ui/ExampleApp.ts                       ApplicationV2 shell that mounts a Svelte component
+  ui/components/example/Example.svelte         sample Svelte 5 component (runes)
+  ui/components/example/RuneGoblinBadge.svelte example: art referenced by served path (img + fetched SVG)
   styles.css         global styles → dist/pf2e-module-template.css
   app.d.ts           ambient *.svelte declaration
+assets/              module art — one source, one output, served at modules/<id>/assets/…
 dist/                build output (gitignored) — what module.json loads
 lang/en.json         localization
-packs/               LevelDB compendium packs (built)
-  _source/           JSON pack sources (tracked; packed with fvtt)
-scripts/setup.ts     dev symlink setup
+packs/               compendium packs — built from _source by `npm run build` (gitignored)
+  _source/macros/    JSON pack sources (tracked) — e.g. the "Open Example" macro
+scripts/setup.ts     dev install (real dir + symlinks back to the repo)
+scripts/deploy.ts    build + copy a clean self-contained module into Foundry
+scripts/pack.ts      build every packs/_source/<name> into packs/<name> (run by build)
+scripts/removeExampleFiles.ts  strip the example for a clean slate (one-shot; self-deletes)
 ```
+
+## Remove the example
+
+The template ships a **worked example** — the demo window (`src/ui/`), the Rune Goblin badge,
+and the *Open Example* macro — so you can see the patterns (Svelte in ApplicationV2, art by
+served path, a compendium pack) in action. It's a demonstration to learn from, **not** a base
+class to extend in place: build your own ApplicationV2 alongside it, modeled on what it shows.
+
+Once you've taken what you need, strip it:
+
+```bash
+npm run remove-example-files
+```
+
+It deletes the example files and trims `src/index.ts`, `module.json`, and `lang/en.json` back
+to a minimal skeleton that still builds and loads, then removes itself. Until you add your
+first `.svelte` file, `npm run check` prints a harmless "no svelte input files" warning.
 
 ## Develop
 
@@ -141,7 +168,7 @@ dependency, so `npm install` brings it:
 
 ```bash
 npm install
-npm run setup      # symlink this module into Foundry (see below)
+npm run setup      # scaffold this module into Foundry (see below)
 npm run build      # emit dist/, then enable the module in a world
 ```
 
@@ -151,6 +178,7 @@ Then:
 npm run dev        # HMR dev server (Vite reverse-proxies Foundry)
 npm run watch      # vite build --watch (rebuild dist/ on save, no HMR)
 npm run check      # svelte-check + tsc --noEmit
+npm run deploy     # build + copy a clean, self-contained module into Foundry
 ```
 
 **HMR** runs Vite on `:30001` as a reverse proxy *in front of* a running Foundry. Foundry
@@ -172,8 +200,8 @@ hot-reloads `.hbs`/`.css`/`.json` in place, but not esmodules).
 
 ### `npm run setup`
 
-Links the repo into Foundry and pulls reference sources in. It resolves three things,
-prompting only when it can't detect them:
+Installs the module into Foundry for live dev and pulls reference sources in. It resolves
+three things, prompting only when it can't detect them:
 
 - **Foundry data dir** — from Foundry's `Config/options.json` (`dataPath`) in the
   default user-data folder (macOS `~/Library/Application Support/FoundryVTT*`, Windows
@@ -181,7 +209,13 @@ prompting only when it can't detect them:
   overrides. It links an existing dir, never creates one.
 - **PF2e source** (optional — types also come from the `foundry-pf2e` dep) — clone
   `foundryvtt/pf2e`, point at a checkout, or skip.
-- **Symlinks** — confirms before writing them.
+- **Links** — confirms before writing them.
+
+The Foundry module dir (`<FoundryData>/Data/modules/<id>`) is a **real directory** whose
+entries symlink back to the repo — `module.json`, `dist/`, `lang/`, `packs/`, and `assets/`.
+This keeps edits and Vite HMR live without exposing the whole repo (`node_modules`, `.git`)
+to Foundry, and `assets/` resolves at the same `modules/<id>/assets/…` path content
+references. For a clean, link-free copy (assets and packs included), use `npm run deploy`.
 
 Resolved paths cache to `.dev-paths.json` (gitignored). Flags: `--reconfigure` (re-ask),
 `--no-link` (paths only), `--yes` (non-interactive). The gitignored links it creates:
@@ -215,15 +249,23 @@ The window is a thin `ApplicationV2` subclass; Svelte renders. `_renderHTML` cal
 
 ## Compendium packs (fvtt CLI)
 
-The `fvtt` CLI is a dev dependency, wrapped as `npm run pack` / `npm run unpack`. Close
-Foundry first — LevelDB locks while it runs.
+Pack **sources** live in `packs/_source/<name>/*.json` (tracked). `npm run build` compiles
+every one into a LevelDB at `packs/<name>` via `scripts/pack.ts` — the built packs are
+gitignored, like `dist/`, so the shipped LevelDB always matches the sources and the current
+module id. The starter example is the `macros` pack with an **Open Example** script macro
+(`game.modules.get('<id>')?.api?.open()`), which opens the example window from the macro bar.
+
+Edit the JSON sources, then rebuild. The `fvtt` CLI (a dev dependency) is wrapped for manual
+single-pack work — close Foundry first, as it locks the LevelDB while it runs (the `build`
+step skips a locked pack with a warning):
 
 ```bash
 npm run pack   -- <pack-name> --in packs/_source/<pack-name> --out packs
 npm run unpack -- <pack-name> --in packs --out packs/_source/<pack-name>
 ```
 
-Add the pack to `module.json` `"packs"`; Actor/Item packs also need `"system": "pf2e"`.
+To add a pack: create `packs/_source/<name>/`, register it under `module.json` `"packs"`
+(Actor/Item packs also need `"system": "pf2e"`), and `npm run build`.
 
 ## Release
 

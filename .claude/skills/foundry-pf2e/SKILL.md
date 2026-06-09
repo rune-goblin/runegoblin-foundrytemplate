@@ -17,7 +17,7 @@ These are hybrid modules: compendium content (`packs/`) plus a scripted esmodule
 (`src/`) built with TypeScript + Svelte 5 + Vite into `dist/<id>.js` + `.css`, which
 `module.json` loads.
 
-New module? Start from `pf2e-module-template` and run `npm run init -- <new-id>`; it
+New module? Start from the `runegoblin-foundrytemplate` template and run `npm run init -- <new-id>`; it
 rewrites the id/title everywhere. Don't hand-scaffold from scratch.
 
 ## Two rules that override defaults

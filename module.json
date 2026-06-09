@@ -22,7 +22,14 @@
       "path": "lang/en.json"
     }
   ],
-  "packs": [],
+  "packs": [
+    {
+      "name": "macros",
+      "label": "PF2e Module Template Macros",
+      "path": "packs/macros",
+      "type": "Macro"
+    }
+  ],
   "relationships": {
     "systems": [
       {

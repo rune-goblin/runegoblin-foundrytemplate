@@ -1,7 +1,6 @@
 import './styles.css';
+import { MODULE_ID } from './constants';
 import { ExampleApp } from './ui/ExampleApp';
-
-const MODULE_ID = 'pf2e-module-template';
 
 interface ModuleApi {
   version: string;

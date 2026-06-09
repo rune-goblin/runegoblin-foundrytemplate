@@ -1,5 +1,5 @@
 import { mount, unmount } from 'svelte';
-import Example from './Example.svelte';
+import Example from './components/example/Example.svelte';
 
 const { ApplicationV2 } = foundry.applications.api;
 
@@ -8,7 +8,7 @@ export class ExampleApp extends ApplicationV2 {
     id: 'pf2e-module-template-example',
     tag: 'section',
     classes: ['pf2e-module-template'],
-    window: { title: 'PF2e Module Template', icon: 'fa-solid fa-flask', resizable: false },
+    window: { title: 'pf2e-module-template.title', icon: 'fa-solid fa-flask', resizable: false },
     position: { width: 420, height: 'auto' as const },
   };
 

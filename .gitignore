@@ -5,11 +5,10 @@ dist/
 *.zip
 *.log
 
-# LevelDB volatile files (packs/_source JSON stays tracked)
-packs/**/LOCK
-packs/**/LOG
-packs/**/LOG.old
-packs/**/*.log
+# Compendium packs are built from packs/_source by `npm run build` (gitignored like dist/);
+# only the JSON sources are tracked.
+packs/*
+!packs/_source/
 
 # Local dev paths + reference symlinks (sandbox only, created by npm run setup)
 .dev-paths.json
