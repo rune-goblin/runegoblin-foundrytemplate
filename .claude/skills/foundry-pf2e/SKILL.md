@@ -53,8 +53,9 @@ Load these as needed; don't read all of them up front.
   zip, and why `npm run check` is separate. Read when touching the build or adding
   templates/assets.
 - **`references/packs-cli.md`** — compendium packs: the `fvtt` pack/unpack workflow,
-  the LevelDB lock, `_key`, and registering packs in `module.json`. Read when working
-  with `packs/`.
+  the LevelDB lock, `_key`, registering packs in `module.json`, and **distribution** —
+  raw compendia vs. a derived **Adventure** pack (keepId, the `_library/` convention, when
+  *not* to use one). Read when working with `packs/` or deciding how content ships.
 - **`references/multi-client-sync.md`** — keeping state consistent across connected
   clients: document-flag propagation vs. raw socket, GM-authority request/reply, race
   safety. Read only when state must sync across clients.

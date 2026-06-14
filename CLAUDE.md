@@ -67,6 +67,16 @@ Code style: global `~/.claude/CLAUDE.md` — comment only the non-obvious *why*.
   LevelDB. If Foundry holds a pack open the build skips it with a warning (LevelDB lock) —
   close Foundry to refresh. `npm run init` rewrites the sources so a generated module's packs
   carry its id after the next build. Pack workflow: skill's `packs-cli.md`.
+- **Distribution is derived, not a mode.** `scripts/pack.ts` ships what `module.json` registers:
+  register an `Adventure` pack and `npm run build` *derives* it from the per-type sources
+  (`scripts/build-adventure.ts`, keepId import → ids preserved → cross-links hold); register none
+  and you get plain compendia. Runtime libraries (effects a rule grants in place by compendium UUID)
+  go under `packs/_source/_library/<name>/` so they ship as compendia and stay out of the Adventure.
+  Sources stay canonical (compendium UUIDs); the build rewrites bundled-pack refs to world UUIDs,
+  `scripts/normalize-refs.ts` rewrites them back after an unpack. Don't default to an Adventure —
+  imported docs are copies that go stale on module update; only *worlds to run* warrant it. Runtime
+  side: `promptAdventureImport()` in `src/adventure.ts` (self-deactivates with no Adventure pack).
+  Decision guide + workflow: README "Ship as an Adventure" and the skill's `packs-cli.md`.
 - `dist/` is gitignored — served via the dev scaffold's `dist` symlink after build; CI builds it for releases.
 - Vite does **not** type-check — run `npm run check` (the release workflow does too).
 - `npm run dev` = Vite HMR dev server on `:30001` reverse-proxying Foundry (`:30000`). It proxies an *already-running* Foundry — start Foundry and **launch a world with the module enabled** first, or there's no esmodule to hot-swap. Then browse `:30001/game` (not `:30000`). `.svelte` edits hot-swap; editing `src/index.ts` full-reloads. `npm run watch` = old `vite build --watch` (browse `:30000`, manual F5; Foundry hot-reloads `.hbs`/`.css`/`.json` but not esmodules).

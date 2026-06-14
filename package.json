@@ -19,7 +19,9 @@
     "setup": "node scripts/setup.ts",
     "deploy": "node scripts/deploy.ts",
     "pack": "fvtt package pack",
-    "unpack": "fvtt package unpack"
+    "unpack": "fvtt package unpack",
+    "build:adventure": "node scripts/build-adventure.ts",
+    "normalize": "node scripts/normalize-refs.ts"
   },
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "^3.0.3",

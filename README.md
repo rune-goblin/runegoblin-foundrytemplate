@@ -135,11 +135,15 @@ src/                 TypeScript + Svelte source (entry: src/index.ts)
 assets/              module art — one source, one output, served at modules/<id>/assets/…
 dist/                build output (gitignored) — what module.json loads
 lang/en.json         localization
+src/adventure.ts     adventure install prompt (no-op unless an Adventure pack is registered)
 packs/               compendium packs — built from _source by `npm run build` (gitignored)
   _source/macros/    JSON pack sources (tracked) — e.g. the "Open Example" macro
+  _source/_library/  pack sources kept as compendia, never folded into an Adventure (optional)
 scripts/setup.ts     dev install (real dir + symlinks back to the repo)
 scripts/deploy.ts    build + copy a clean self-contained module into Foundry
-scripts/pack.ts      build every packs/_source/<name> into packs/<name> (run by build)
+scripts/pack.ts      build the packs module.json registers (compendia + any Adventure); run by build
+scripts/build-adventure.ts     derive one Adventure document from the per-type sources (keepId import)
+scripts/normalize-refs.ts      rewrite world UUIDs back to compendium UUIDs after an unpack
 scripts/removeExampleFiles.ts  strip the example for a clean slate (one-shot; self-deletes)
 ```
 
@@ -266,6 +270,52 @@ npm run unpack -- <pack-name> --in packs --out packs/_source/<pack-name>
 
 To add a pack: create `packs/_source/<name>/`, register it under `module.json` `"packs"`
 (Actor/Item packs also need `"system": "pf2e"`), and `npm run build`.
+
+## Ship as an Adventure (vs. compendia)
+
+A module can distribute its content two ways, off the **same** `packs/_source/` tree:
+
+- **Compendia** (the default) — browseable packs the GM drags from piecemeal. Right for a
+  *bag of content*: a bestiary, a token/item/spell collection, a rules library. They stay live —
+  update the module and users see the new content.
+- **One Adventure** — a single document the GM imports in a click, populating the world. Right
+  for *a world to run*: scenes with placed tokens, encounters, journals/macros that cross-reference
+  each other or specific actors, or esmodule features bound to a document id.
+
+The Adventure importer creates world documents with **keepId**, so every `_id` is preserved on
+every install — that's what keeps hardcoded ids and `@UUID` cross-links valid. Loose per-pack
+import mints new ids and silently breaks them.
+
+**Don't reach for an Adventure by default.** Imported documents are *copies*: a later module update
+won't touch them, and re-importing risks clobbering the GM's edits. Anything you expect to keep
+improving belongs in a compendium, not an Adventure.
+
+The model is **derived, not a mode** — there's nothing to switch and no migration. The capability is
+always present; you opt in by what you register:
+
+1. **Register an `Adventure` pack** in `module.json` `"packs"` — that registration is the trigger:
+   ```json
+   { "name": "<name>", "label": "Your Adventure", "path": "packs/<name>", "type": "Adventure", "system": "pf2e" }
+   ```
+2. **Put runtime libraries under `packs/_source/_library/<name>/`.** Anything a rule element grants
+   in place by compendium UUID (e.g. a PF2e `Aura`'s effects) must stay compendium-resident — never
+   imported. The `_library/` subtree marks those packs to ship as compendia and stay *out* of the
+   Adventure. Register them too (as normal `Item`/etc. packs).
+3. **`npm run build`** — `scripts/build-adventure.ts` derives the Adventure from every `_source/<dir>`
+   outside `_library/`, rewrites `@UUID`/rule-`uuid` refs that point at bundled packs into **world**
+   UUIDs (refs to `_library` packs stay compendium UUIDs), drops scene tokens whose actor isn't
+   bundled and links the rest, and compiles it. Run it alone with `npm run build:adventure`.
+4. **Prompt the import at runtime** — call `promptAdventureImport()` (from `src/adventure.ts`) in your
+   `ready` hook. It discovers the module's Adventure pack and prompts the GM once (gated by Foundry's
+   `core.adventureImports`); it's a no-op when no Adventure pack is registered, so it self-deactivates.
+   For a worked example see netherworld.
+
+Drop the Adventure registration and you're back to plain compendia — nothing in the sources changed.
+
+**Keep sources canonical.** Author refs as compendium UUIDs (`Compendium.<id>.<pack>.<Type>.<id>`);
+the build does the world-UUID rewrite. If you import the Adventure, edit in Foundry, and unpack the
+result, refs come back as world UUIDs — run `npm run normalize` (`scripts/normalize-refs.ts`) to
+rewrite them back to the canonical compendium form so the sources don't drift.
 
 ## Release
 
