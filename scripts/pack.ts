@@ -12,8 +12,8 @@
 //   npm run pack -- <name> --in packs/_source/<name> --out packs
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { execSync } from 'node:child_process';
 import { buildAdventure } from './build-adventure.ts';
+import { packCompendium } from './pack-leveldb.ts';
 
 const ROOT = process.cwd();
 const SOURCE = join(ROOT, 'packs', '_source');
@@ -45,9 +45,7 @@ for (const pack of packs) {
     console.warn(`⚠ pack "${pack.name}" registered in module.json but no source at packs/_source/${pack.name} — skipping.`);
     continue;
   }
-  try {
-    execSync(`fvtt package pack ${pack.name} --in ${dir} --out packs`, { stdio: 'inherit' });
-  } catch {
+  if (!packCompendium(pack.name, dir, join(ROOT, 'packs'))) {
     console.warn(`⚠ pack "${pack.name}" not rebuilt (is Foundry holding it open? LevelDB lock) — keeping the existing build.`);
   }
 }

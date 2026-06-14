@@ -18,7 +18,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
+import { packCompendium } from './pack-leveldb.ts';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SOURCE = join(ROOT, 'packs', '_source');
@@ -114,12 +114,10 @@ export function buildAdventure(opts: { dry?: boolean } = {}): boolean {
   const doc = JSON.parse(json) as Record<string, unknown>;
   doc._key = `!adventures!${doc._id as string}`;
   writeFileSync(join(stageDir, `${advPack.name}.json`), JSON.stringify(doc, null, 2) + '\n');
-  execFileSync('fvtt', ['package', 'pack', advPack.name, '--in', stageDir, '--out', join(ROOT, 'packs')], {
-    stdio: 'inherit',
-    cwd: ROOT,
-  });
+  const built = packCompendium(advPack.name, stageDir, join(ROOT, 'packs'));
   rmSync(STAGING, { recursive: true, force: true });
-  console.log(`✓ packs/${advPack.name} built`);
+  if (built) console.log(`✓ packs/${advPack.name} built`);
+  else console.warn(`⚠ adventure "${advPack.name}" not rebuilt (is Foundry holding it open? LevelDB lock) — keeping the existing build.`);
   return true;
 }
 
