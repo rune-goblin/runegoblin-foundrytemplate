@@ -182,6 +182,8 @@ Then:
 npm run dev        # HMR dev server (Vite reverse-proxies Foundry)
 npm run watch      # vite build --watch (rebuild dist/ on save, no HMR)
 npm run check      # svelte-check + tsc --noEmit
+npm test           # vitest unit specs (zero-setup; the CI tier)
+npm run test:e2e   # Playwright vs. a real headless Foundry (opt-in — see src/tests/e2e/README.md)
 npm run deploy     # build + copy a clean, self-contained module into Foundry
 ```
 

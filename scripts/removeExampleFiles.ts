@@ -36,6 +36,13 @@ remove(at('src', 'ui', 'components', 'example'));
 pruneIfEmpty(at('src', 'ui', 'components'));
 pruneIfEmpty(at('src', 'ui'));
 
+// The example test specs exercise the demo itself — the e2e smoke opens the example window via
+// api.open(); the unit spec is a worked example. They ride the same lifecycle as ExampleApp. The
+// harness plumbing (e2e fixtures/global-setup/configs/scripts, vitest.config) stays — it's generic.
+remove(at('src', 'tests', 'e2e', 'launch.spec.ts'));
+remove(at('src', 'tests', 'unit', 'example.test.ts'));
+pruneIfEmpty(at('src', 'tests', 'unit'));
+
 remove(at('assets', 'runegoblin-slice-small.webp'));
 remove(at('assets', 'runegoblin-title.svg'));
 // Keep assets/ even when empty: deploy/release reference modules/<id>/assets/ and `zip`

@@ -59,6 +59,11 @@ Load these as needed; don't read all of them up front.
 - **`references/multi-client-sync.md`** — keeping state consistent across connected
   clients: document-flag propagation vs. raw socket, GM-authority request/reply, race
   safety. Read only when state must sync across clients.
+- **`references/testing.md`** — the two-tier verification harness: `npm test` (vitest,
+  zero-setup, the CI tier) vs. `npm run test:e2e` (Playwright against a real headless
+  Foundry), what each proves, commands + preconditions, checking harness health before
+  trusting green, and how to author a spec. Read when verifying a change, adding tests,
+  or wiring CI.
 
 ## Essentials worth knowing without opening a file
 
