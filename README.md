@@ -11,7 +11,7 @@ shell — from one repo.
 ## What you get
 
 - **FoundryVTT v14 Stack.** TypeScript runs source and tooling alike: `vite.config.ts`,
-  `svelte.config.ts`, and `scripts/*.ts` run on Node ≥ 22.12, with no
+  `svelte.config.ts`, and `scripts/*.ts` run on Node ≥ 22.18, with no
   `tsx` or `ts-node`. No v1 Foundry APIs — ApplicationV2, DialogV2, and DataModel only.
 
 - **Svelte 5 in ApplicationV2, wired up.** A working window (`src/ui/ExampleApp.ts`)
@@ -166,7 +166,7 @@ first `.svelte` file, `npm run check` prints a harmless "no svelte input files" 
 
 ## Develop
 
-Set up once — needs Node ≥ 22.12 and a local Foundry install. The
+Set up once — needs Node ≥ 22.18 (for native `.ts` config/tooling) and a local Foundry install. The
 [`fvtt`](https://github.com/foundryvtt/foundryvtt-cli) CLI (for packs) ships as a dev
 dependency, so `npm install` brings it:
 

@@ -41,8 +41,9 @@ generated from the template starts its own history.
 - `tsconfig.node.json` and a third `npm run check` pass that type-check the tooling
   (`vite.config.ts`, `svelte.config.ts`, `scripts/*.ts`), backed by `@types/node`. The
   "TypeScript everywhere, including tooling" rule is now actually enforced.
-- `.nvmrc` (Node 22.12.0); the release workflow reads it via `node-version-file`, so CI
-  and `engines.node` no longer drift.
+- `.nvmrc` (Node 22.18.0 — the floor for default `.ts` type-stripping, so `node` runs the
+  TypeScript config/tooling directly); the release workflow reads it via `node-version-file`,
+  so CI and `engines.node` no longer drift.
 - `npm run init` fills the `module.json` author and `url`/`manifest`/`download` URLs from
   your GitHub owner (auto-detected from the repo's `origin`, or `--org`) and `git config
   user.name` (or `--author`). The committed template ships `<your-org>`/`<your-name>`

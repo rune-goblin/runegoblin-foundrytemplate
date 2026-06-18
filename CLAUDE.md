@@ -21,7 +21,7 @@ Code style: global `~/.claude/CLAUDE.md` — comment only the non-obvious *why*.
   `getProperty`. Windows are ApplicationV2; dialogs DialogV2; structured data is
   `foundry.abstract.DataModel` + `defineSchema()`. A v1-only class → find the V2 form first.
 - **TypeScript everywhere, including tooling.** `vite.config.ts`, `svelte.config.ts`,
-  and `scripts/*.ts` run via `node` (≥22.6 strips types — no `tsx`/`ts-node`). No
+  and `scripts/*.ts` run via `node` (≥22.18 strips types by default — no `tsx`/`ts-node`). No
   `.mjs`/`.js` tooling. `package.json` pins `engines.node`.
 - **UI is Svelte 5 mounted in an ApplicationV2 shell** (`mount`/`unmount`, runes) — not
   Svelte 4 forms (`new Component()`, `$destroy`, `export let`). See the skill's

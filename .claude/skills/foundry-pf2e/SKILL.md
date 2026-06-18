@@ -33,7 +33,7 @@ before writing it — don't fall back to v1.
 
 **2. TypeScript everywhere, including tooling.** App code, `vite.config.ts`,
 `svelte.config.ts`, and Node scripts (`scripts/*.ts`) are all TypeScript. Run scripts
-with `node scripts/foo.ts`; Node ≥22.6 strips types, so no `tsx`/`ts-node`. Don't
+with `node scripts/foo.ts`; Node ≥22.18 strips types by default, so no `tsx`/`ts-node`. Don't
 introduce `.mjs`/`.js` tooling unless a tool's config loader requires it.
 
 ## Reference files — read the one that fits the task

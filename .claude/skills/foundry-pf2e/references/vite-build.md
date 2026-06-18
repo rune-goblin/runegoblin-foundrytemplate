@@ -94,9 +94,10 @@ run it before building, so a broken `tsc` can't ship.
 
 ## TypeScript tooling
 
-`vite.config.ts`, `svelte.config.ts`, and `scripts/*.ts` are all TypeScript; Node ≥22.6
-strips types so scripts run via `node scripts/foo.ts` (no `tsx`/`ts-node`). Pin
-`engines.node`. Both svelte-check and vite load a `.ts` svelte config fine.
+`vite.config.ts`, `svelte.config.ts`, and `scripts/*.ts` are all TypeScript; Node ≥22.18
+strips types by default so scripts run via `node scripts/foo.ts` (no `tsx`/`ts-node`). Pin
+`engines.node` (and `.nvmrc`) to ≥22.18 — older Node can't load the `.ts` configs. Both
+svelte-check and vite load a `.ts` svelte config fine.
 
 ## Release
 
