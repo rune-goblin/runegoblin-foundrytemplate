@@ -7,10 +7,18 @@ own `package.json`.
 This file documents the template itself — `npm run init` removes it so each module
 generated from the template starts its own history.
 
-## [Unreleased]
+## [0.1.0] — 2026-06-22
+
+First published release.
 
 ### Added
 
+- The foundational stack: v14-only TypeScript + Svelte 5 + Vite; a Svelte 5 UI mounted in an
+  ApplicationV2 shell; the compendium-pack workflow; `npm run init` rename; `npm run setup` dev
+  linking; a tag-driven GitHub release workflow; and the bundled `foundry-pf2e` Claude Code skill.
+- `scripts/check-lockfile.ts`, run before `npm ci` in the release workflow — guards the committed
+  lock against npm pruning the top-level `@emnapi/*` peer nodes that the rolldown/oxc wasm
+  bindings require, which otherwise breaks `npm ci` on the linux runner with a cryptic error.
 - `npm run remove-example-files` (`scripts/removeExampleFiles.ts`) — strips the worked example
   for a clean slate: deletes the demo window (`src/ui/`), the Rune Goblin badge art, and the
   *Open Example* macro, and trims `src/index.ts`, `module.json` (`packs: []`), and `lang/en.json`
@@ -41,9 +49,9 @@ generated from the template starts its own history.
 - `tsconfig.node.json` and a third `npm run check` pass that type-check the tooling
   (`vite.config.ts`, `svelte.config.ts`, `scripts/*.ts`), backed by `@types/node`. The
   "TypeScript everywhere, including tooling" rule is now actually enforced.
-- `.nvmrc` (Node 22.18.0 — the floor for default `.ts` type-stripping, so `node` runs the
+- `.nvmrc` (Node 24; 22.18 is the floor for default `.ts` type-stripping, so `node` runs the
   TypeScript config/tooling directly); the release workflow reads it via `node-version-file`,
-  so CI and `engines.node` no longer drift.
+  so CI and `engines.node` no longer drift. CI actions pinned to `@v5` (Node 24 runtime).
 - `npm run init` fills the `module.json` author and `url`/`manifest`/`download` URLs from
   your GitHub owner (auto-detected from the repo's `origin`, or `--org`) and `git config
   user.name` (or `--author`). The committed template ships `<your-org>`/`<your-name>`
@@ -92,11 +100,3 @@ generated from the template starts its own history.
   LevelDB, killing diffs on the hand-edited JSON. Sources are now text + diffable; only
   built packs stay binary.
 
-## [0.1.0]
-
-### Added
-
-- Initial template: v14-only TypeScript + Svelte 5 + Vite stack; a Svelte 5 UI mounted
-  in an ApplicationV2 shell; compendium pack workflow; `npm run init` rename; `npm run
-  setup` dev linking; a tag-driven GitHub release workflow; and the bundled
-  `foundry-pf2e` Claude Code skill.
