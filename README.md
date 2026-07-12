@@ -36,8 +36,11 @@ shell — from one repo.
   **copies** a clean, self-contained module (assets and packs included) — the same shape the
   release zip ships, for testing the artifact or installing without the repo.
 
-- **Release on tag.** Push `vX.Y.Z`; `release.yml` stamps the version, type-checks, builds,
-  and publishes a GitHub release with `module.json` and the module zip.
+- **Release pipeline for your module.** Once `npm run init` has made this a real module,
+  pushing a tag `vX.Y.Z` runs `release.yml`: stamp the version, type-check, build, and publish
+  the installable `module.json` + zip that Foundry pulls. It ships *your* module — the template
+  itself isn't installed into Foundry (people get it via **Use this template**), so it needs no
+  release of its own.
 
 - **AI authoring built in.** A bundled `foundry-pf2e` Claude Code skill (`.claude/skills/`)
   carries the Foundry/PF2e API, packs, Svelte-in-ApplicationV2, build, and sync rules into
@@ -342,8 +345,14 @@ Picking it up as you build:
 
 ## Release
 
-Push a tag `vX.Y.Z`; `release.yml` stamps the version, type-checks, builds, and
-publishes a GitHub release with `module.json` + `pf2e-module-template.zip`.
+This pipeline is for the module you generate, **not** for the template. People consume the
+template through GitHub's **Use this template**, which copies `main` — so the template itself
+is never installed into Foundry and needs no release of its own. (Don't cut a release just
+because `main` moved; there's no consumer pulling it.)
+
+Once `npm run init` has turned this into your module, push a tag `vX.Y.Z`: `release.yml` stamps
+the version, type-checks, builds, and publishes a GitHub release with the installable
+`module.json` + zip that Foundry pulls.
 
 ## License
 

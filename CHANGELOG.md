@@ -16,6 +16,10 @@ First published release.
 - The foundational stack: v14-only TypeScript + Svelte 5 + Vite; a Svelte 5 UI mounted in an
   ApplicationV2 shell; the compendium-pack workflow; `npm run init` rename; `npm run setup` dev
   linking; a tag-driven GitHub release workflow; and the bundled `foundry-pf2e` Claude Code skill.
+- A two-tier test harness: `npm test` runs zero-setup **vitest** unit specs (the CI tier), and
+  `npm run test:e2e` drives **Playwright** against a real headless Foundry (opt-in — it needs a
+  licensed Foundry and a migration-current pf2e world, so it stays out of CI). `vitest.config.ts`
+  and `playwright.config.ts` configure the two tiers.
 - `scripts/check-lockfile.ts`, run before `npm ci` in the release workflow — guards the committed
   lock against npm pruning the top-level `@emnapi/*` peer nodes that the rolldown/oxc wasm
   bindings require, which otherwise breaks `npm ci` on the linux runner with a cryptic error.
