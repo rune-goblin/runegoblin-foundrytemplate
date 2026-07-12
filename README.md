@@ -319,6 +319,27 @@ the build does the world-UUID rewrite. If you import the Adventure, edit in Foun
 result, refs come back as world UUIDs — run `npm run normalize` (`scripts/normalize-refs.ts`) to
 rewrite them back to the canonical compendium form so the sources don't drift.
 
+## CI
+
+`.github/workflows/ci.yml` runs on every push to `main` and every pull request. It guards
+the lockfile (`scripts/check-lockfile.ts`), installs with `npm ci`, type-checks
+(`npm run check` — svelte-check + tsc), and runs the vitest unit suite (`npm test`). No
+secrets, no Foundry install — a module created from this template gets a **green CI bar the
+moment its repo is on GitHub**, nothing to configure. (This is separate from `release.yml`,
+below, which runs only on version tags.)
+
+Picking it up as you build:
+
+- **Keep it meaningful.** CI runs whatever `npm test` runs, so add vitest specs under
+  `src/tests/unit/` as you add logic. An empty suite still passes — a green bar means
+  "typechecks + whatever tests exist," not "tested."
+- **e2e is intentionally excluded.** `npm run test:e2e` drives a real headless Foundry, which
+  needs a licensed install and a migration-current pf2e world the runner doesn't have. Run it
+  locally — see [`src/tests/e2e/README.md`](src/tests/e2e/README.md).
+- **Want coverage reporting/gating?** Add a `test:coverage` script (and, for a step-summary,
+  a `scripts/coverage-summary.ts`), then append the step to `ci.yml`. It's left out here so the
+  workflow stays generic — CI shouldn't fail on a coverage threshold a fresh module can't meet.
+
 ## Release
 
 Push a tag `vX.Y.Z`; `release.yml` stamps the version, type-checks, builds, and

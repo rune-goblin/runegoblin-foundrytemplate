@@ -34,10 +34,12 @@ Code style: global `~/.claude/CLAUDE.md` — comment only the non-obvious *why*.
 - `npm run dev` — HMR dev server (`:30001`, proxies Foundry). `npm run watch` — `vite build --watch`.
   `npm run check` — `svelte-check` + `tsc`. `npm run setup` —
   resolve dev paths (detect/clone/prompt), then scaffold the Foundry module dir + pull references in.
-- **Test (verification loop):** `npm test` — vitest unit specs (zero-setup, the CI tier).
-  `npm run test:e2e` — Playwright against a real headless Foundry (opt-in; needs a licensed Foundry
-  + a migration-current pf2e world, so it can't run in CI). Tiers, commands, preconditions, the
-  check-harness-health discipline, and spec conventions live in the skill's `references/testing.md`.
+- **Test (verification loop):** `npm test` — vitest unit specs (zero-setup, the CI tier:
+  `.github/workflows/ci.yml` runs `check` + `npm test` on every push to `main` and every PR,
+  needs no secrets or Foundry install). `npm run test:e2e` — Playwright against a real headless
+  Foundry (opt-in; needs a licensed Foundry + a migration-current pf2e world, so it's excluded
+  from CI). Tiers, commands, preconditions, the check-harness-health discipline, and spec
+  conventions live in the skill's `references/testing.md`.
 - **Two ways the module lands in Foundry** (both put it at `modules/<id>/`):
   - `npm run setup` (dev) — a **real** module dir whose entries (`module.json`, `dist`, `lang`,
     `packs`, `assets`) symlink back to the repo, so edits + Vite HMR are live. NOT a whole-repo
